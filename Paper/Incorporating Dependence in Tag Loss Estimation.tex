@@ -1,0 +1,513 @@
+% Converted from Microsoft Word to LaTeX
+% by Chikrii Softlab Word2TeX converter (version 5.0)
+% Copyright (C) 1999-2011 Chikrii Softlab. All rights reserved.
+% http://www.chikrii.com
+% mailto: support@chikrii.com
+% License: CSL#004DE0
+
+\documentclass{article}
+\usepackage{latexsym}
+
+\begin{document}
+\begin{center}
+\textbf{Incorporating Dependence in Tag Loss Estimation}
+\end{center}
+
+\textbf{Introduction}
+
+Developing methods of marking animals that minimize or eliminate mark loss 
+are important because mark-recapture estimators assume recaptures of marked 
+individuals are always detected (Seber 1982). However, current methods of 
+marking many different species indicate that problems with mark retention 
+encompass small mammals (Fokidis et al. 2006), large terrestrial mammals 
+(Fosgate et al. 2006), aquatic mammals (Bradshaw et al. 2000), fish (Cowen 
+and Schwartz 2006), and reptiles (Rivalan et al. 2005). If the assumption 
+that no marks are lost is violated then estimates of population parameters 
+(e.g., survival and abundance) will be biased (Arnason and Mills 1981, 
+Diefenbach and Alt 1998) because previously marked animals that lose all 
+marks are treated as being part of the unmarked population in closed 
+population models and as immigrants in open models. Furthermore, even if an 
+estimator is robust to violation of this assumption, the loss of marks will 
+reduce the precision of parameter estimates because of the apparent 
+reduction in sample size (Rotella and Hines 2005).
+
+Using natural markings to track individual animals can have low error rates 
+(Stevick et al. 2001), but not all species can be monitored in this manner. 
+Consequently, methods of estimating tag loss likely will be necessary until 
+new technologies are developed that eliminate mark loss. Historically, 
+animals have been double-marked and the status of marks upon recapture (none 
+or one mark missing) have been used to estimate mark loss under the 
+assumption that each mark is lost independently of the other mark (Beverton 
+and Holt 1957, Seber 1982). This independence assumption is required because 
+the recapture of a marked animal that lost both marks is not observable.
+
+In recent studies where the opportunity has occurred to observe loss of both 
+tags via the use of a third permanent mark, however, the independence 
+assumption has been shown to be invalid (Siniff and Ralls, 1991; Diefenbach 
+and Alt, 1998; Bradshaw, Barker and Davis, 2000; Rivalan et al., 2005). 
+These studies undermine the credibility of tag loss evaluations for 
+situations in which loss of both marks is not observable (Pistorius et al., 
+2000). Consequently, it is important to incorporate appropriate models of 
+mark loss to reduce bias in estimates of population parameters, even if 
+modeling tag loss results in reduced precision (e.g., Pollock et al. 2007).
+
+Unfortunately, not all species can be marked with a third permanent mark to 
+detect the recapture of individuals with both marks missing to assess the 
+assumption of independence of each mark loss event. This situation has some 
+similarities to mark-recapture distance sampling (Laake, 1999; Borchers et 
+al., 2006; Laake, Dawson and Hone, 2008) in which objects missed by both 
+observers cannot be included in the sample because they are not observed 
+(Borchers, 1999). However, \textless \textless appropriate Borchers/Laake 
+citation here\textgreater \textgreater used ancillary distance data to 
+weaken the independence assumption such that independence was assumed only 
+for observations that occurred close to the transect line and improve 
+abundance estimates. If the independence assumption can be similarly 
+weakened in situations where both marks are lost in mark-recaptures studies, 
+it may be possible to evaluate loss of marks for species where only 
+double-marked individuals are feasible.
+
+We develop a model of mark loss that explicitly models dependence in loss of 
+marks and then we consider situations where we can weaken the independence 
+assumption by incorporating dependence. We apply the model to tagged 
+California sea lions (\textit{Zalophus californianus}) and black bear (\textit{Ursus americanus}) which were both double tagged and 
+given a separate permanent mark. We compare the results using an 
+independence model and dependence model with the double tag data excluding 
+the double tag loss observations to the results using the data including the 
+known double tag loss.
+
+\textbf{Tag Loss Models}
+
+We first consider a simple situation which has been well described in the 
+literature (Seber 1982) and then we will build from this foundation. Two 
+tags are applied to a sample of animals, they are released and at some time 
+later a sample of animals are observed having one (n$_{\mathrm{1}}=$ 
+n$_{\mathrm{01}}+$ n$_{\mathrm{10}})$ or two (n$_{\mathrm{2}}=$ 
+n$_{\mathrm{11}})$ tags present. In this simple example, double tag loss 
+($n_{00})$ is not observable. Let \textbf{S} $=$ ($S_{\mathrm{1}}$, 
+$S_{\mathrm{2}})$ represent the status vector of the 2 tags where $S_{i}$ is 1 
+if the $i^{th}$ tag is present and 0 if the $i^{th}$ tag is absent (lost) 
+(note: this is counter to the convention of Diefenbach et al. (1998), 
+Bradshaw et al. (2000) and Rivalan et al. (2005) who use 1 to denote a tag 
+loss event). Usually the tagged animals can only be identified if one or 
+more tags are retained which means those that lost both tags 
+($n_{00};\thinspace $\textbf{S} $=$ (0,0)) are not observable. Initially, we 
+assume both tags have the same probability of tag loss, $p$, and we assume 
+independence of tag fates. 
+
+Table 1. Joint ($\pi_{s_{1}s_{2}})$ and marginal ($p$, $q)$ probabilities for 
+double tag status \textbf{S} $=$ ($S_{\mathrm{1}}$, $S_{\mathrm{2}})$ with an 
+assumed independence structure. The $n_{00}$ cell is shaded gray because it 
+is not observed. 
+
+\begin{table}[htbp]
+\begin{center}
+\begin{tabular}{|l|p{112pt}|p{130pt}|p{135pt}|}
+\hline
+& 
+\multicolumn{2}{|p{243pt}|}{\textbf{Tag 2 Status (S}$_{\mathrm{\mathbf{2}}}$\textbf{)}} & 
+ \\
+\hline
+\textbf{Tag 1 Status (S}$_{\mathrm{\mathbf{1}}}$\textbf{)}& 
+\textit{Present (S}$_{2}=$\textit{1)}& 
+\textit{Absent (S}$_{2}=$\textit{0)}& 
+\textit{Marginal} \\
+\hline
+\textit{Present (S}$_{1}=$\textit{1)}& 
+${n_{11};\thinspace \pi }_{11}={(1-p)}^{2}$& 
+${n_{10};\thinspace \pi }_{10}=(1-p)p$& 
+$q=1-p$ \\
+\hline
+\textit{Absent (S}$_{1}=$\textit{0)}& 
+${n_{01};\thinspace \pi }_{01}=p(1-p)$& 
+$n_{00};\thinspace {\thinspace \pi }_{00}=p^{2}$& 
+$p$ \\
+\hline
+\textit{Marginal}& 
+$q=1-p$& 
+$p$& 
+$1$ \\
+\hline
+\end{tabular}
+\label{tab1}
+\end{center}
+\end{table}
+
+Based on the independence assumption, the probability that an animal retains 
+both tags is (1-p)$^{\mathrm{2}}$, the probability of retaining only one tag 
+is 2p(1-p) and the probability of losing both tags is p$^{\mathrm{2}}$. The 
+data and probability structure can be represented by a 2x2 contingency table 
+for the status (present (retained)/absent (lost)) for each tag (Table 1). 
+The marginal probabilities of tag loss and tag retention are $p$ and 
+$q=$1-$p$ and the joint probabilities are represented as $\pi_{11}\pi_{10}\pi 
+_{01}\pi_{00}\thinspace $for each of the cells in the table. Due to the 
+assumed independence the conditional probability of tag loss or retention of 
+a tag given the status of the other tag is the same as the marginal 
+probability. For example, the probability that tag 1 is lost given that tag 
+2 is retained is${\thinspace \pi }_{01}/(1-p)=p\thinspace $
+
+The log-likelihood function (excluding the constant) for $p$ given the observed 
+data ($n_{\mathrm{1}}$, $n_{\mathrm{2}})$ is conditioned on the observations 
+which excludes $n_{00}:$
+\[
+L\left( p\thinspace\vert\thinspace {n_{1},n_{2}}\right) \propto n_{1}\log 
+_{e}[2{p(1-p)}]+n_{2}\log_{e}{[\left( 1-p 
+\right)^{2}]}-(n_{1}+n_{2})\thinspace {log}_{e}{[1-p^{2}]}
+\]
+The maximum likelihood estimator (MLE) for tag loss probability is 
+$\hat{p}=\frac{n_{1}}{n_{1}{+2n}_{2}}$. Now if we allow different 
+probabilities for each tag $(p_{1}p_{2})$ (e.g., different tag types or tag 
+orientation), then the log-likelihood function is:
+\[
+L\left( {p_{1},p_{2}}\thinspace\vert\thinspace {n_{10},n_{01},n_{11}}\right) 
+\propto n_{10}\log_{e}[(1-p_{1})p_{2}]+n_{01}{\mathrm{log}}_{e}\left[ 
+p_{1}\left( 1-p_{2} \right) \right]+n_{11}\log_{e}\left[ \left( 1-p_{1} 
+\right)\left( 1-p_{2} \right) \right]-
+\]
+\[
+(n_{01}+n_{10}+n_{11})\thinspace {log}_{e}{[1-p_{1}p_{2}]}
+\]
+and the MLEs are $\hat{p}_{1}=\frac{n_{01}}{n_{01}{+n}_{11}}$ and 
+$\hat{p}_{2}=\frac{n_{10}}{n_{10}{+n}_{11}}$ which are equivalent to the 
+capture probability estimators in a two occasion capture-recapture 
+experiment for a closed population (i.e., Lincoln-Petersen). Each of those 
+estimators can be viewed as a conditional probability because they measure 
+the probability that tag $i$ was lost given that tag 3-$i$ was retained. If 
+independence holds, the conditional and marginal probabilities are the same. 
+
+We can also express the tag loss probabilities using a logit link (Bradshaw 
+et al. 2000) which becomes helpful to incorporate covariates and to express 
+dependence in tag fates. With the logit link, the natural logarithm 
+(log$_{\mathrm{e}})$ of the odds (log$_{\mathrm{e}}$(p/(1-p)) is some linear 
+function of the parameters. Odds are simply the ratio of the probabilities 
+of the event occurring and not occurring. Allowing different tag loss 
+probabilities for each tag, we can re-express the probabilities in Table 1 
+such that the odds of losing the $i^{th}$ tag ($S_{i}=$0) is $e^{\beta 
+_{i}}$ (Table 2). The model has the same structure and there is a 1-1 
+relationship between $\hat{p}_{i}$ and the parameters $\hat{\beta }_{i}=\log 
+_{e}{[\hat{p}_{i}} \mathord{\left/ {\vphantom {{[\hat{p}_{i}} 
+{{(1-\hat{p}}_{i})]}}} \right. \kern-\nulldelimiterspace} 
+{{(1-\hat{p}}_{i})]}$
+
+Table 2. Joint ($\pi_{s_{1}s_{2}}^{\ast })$ and marginal ($p_{i}^{\ast 
+}q_{i}^{\ast })$ probabilities for double tag status \textbf{S} $=$ 
+($S_{\mathrm{1}}$, $S_{\mathrm{2}})$, where the odds ($p_{i}^{\ast 
+}/q_{i}^{\ast })\thinspace $of losing the $i^{th}$ tag is $e^{\beta_{i}}$ 
+and $K^{\ast }=1+e^{\beta_{1}}+e^{\beta_{2}}+e^{{\beta_{1}+\beta 
+}_{2}}=(1+e^{\beta_{1}})(1+e^{\beta_{2}})$ The $n_{00}$ cell is shaded gray 
+because it is not observed. 
+
+\begin{table}[htbp]
+\begin{center}
+\begin{tabular}{|l|p{103pt}|p{103pt}|p{171pt}|}
+\hline
+& 
+\multicolumn{2}{|p{207pt}|}{\textbf{Tag 2 Status (S}$_{\mathrm{\mathbf{2}}}$\textbf{)}} & 
+ \\
+\hline
+\textbf{Tag 1 Status (S}$_{\mathrm{\mathbf{1}}}$\textbf{)}& 
+\textit{Present (S}$_{2}=$\textit{1)}& 
+\textit{Absent (S}$_{2}=$\textit{0)}& 
+\textit{Marginal} \\
+\hline
+\textit{Present (S}$_{1}=$\textit{1)}& 
+$\pi_{11}^{\ast }=1/K^{\ast }$& 
+$\pi_{10}^{\ast }=e^{\beta_{2}}/K^{\ast }$& 
+$q_{1}^{\ast }=\frac{1+e^{\beta_{2}}}{K^{\ast }}=\frac{1}{1+e^{\beta_{1}}}$ \\
+\hline
+\textit{Absent (S}$_{1}=$\textit{0)}& 
+$\pi_{01}^{\ast }=e^{\beta_{1}}/K^{\ast }$& 
+${\pi_{00}^{\ast }=e}^{\beta_{1}+\beta_{2}}/K^{\ast }$& 
+$p_{1}^{\ast }=\frac{e^{\beta_{1}}\left( 1+e^{\beta_{2}} \right)}{K^{\ast }}=\frac{e^{\beta_{1}}}{1+e^{\beta_{1}}}$ \\
+\hline
+\textit{Marginal}& 
+$q_{2}^{\ast }=1/(1+e^{\beta_{2}})$& 
+${{p_{2}^{\ast }=e}^{\beta_{2}}/(1+e}^{\beta_{2}})$& 
+$1$ \\
+\hline
+\end{tabular}
+\label{tab2}
+\end{center}
+\end{table}
+
+Now we expand the set of observed data to include those animals that lost 
+both tags ($n_{00})$ and we allow for possible dependence in the fates of 
+the tags. In particular, we specify different odds of losing a tag that are 
+dependent on the status of the other tag (Table 3). The odds of losing the 
+$i^{th}$ tag ($S_{i}=$0) given the other tag is present ($S_{3-i\thinspace 
+}=$1) is $e^{\beta_{i}}$ and the odds of losing the $i^{th}$ tag 
+($S_{i}=$0) given other tag is absent ($S_{3-i}=$0) is $e^{\beta 
+_{i}+\alpha }$ where $\alpha $ determines the amount of dependence. These 
+dependent odds are ratios of the joint probabilities (e.g., ${\pi 
+_{01\thinspace }/\pi_{11\thinspace }\thinspace and\thinspace \pi }_{00}/\pi 
+_{10})$ and not the marginal probabilities. Also, because of the dependence 
+the conditional and marginal probabilities differ.
+
+Table 3. Joint ($\pi_{s_{1}s_{2}})$ and marginal ($p_{i}$, $q_{i})$ 
+probabilities for double tag status \textbf{S} $=$ ($S_{\mathrm{1}}$, 
+$S_{\mathrm{2}})$, where the odds of losing the $i^{th}$ tag ($S_{i}=$0) 
+given the other tag is present ($S_{3-i\thinspace }=$1) is $e^{\beta 
+_{i}}$, odds of losing the $i^{th}$ tag ($S_{i}=$0) given other tag is 
+absent ($S_{3-i}=$0) is $e^{\beta_{i}+\alpha }$, and $K=1+e^{\beta 
+_{1}}+e^{\beta_{2}}+e^{{\beta_{1}+\beta }_{2}+\alpha }$ The $n_{00}$ cell 
+is observed in this model. 
+
+\begin{table}[htbp]
+\begin{center}
+\begin{tabular}{|l|p{112pt}|p{130pt}|p{135pt}|}
+\hline
+& 
+\multicolumn{2}{|p{243pt}|}{\textbf{Tag 2 Status (S}$_{\mathrm{\mathbf{2}}}$\textbf{)}} & 
+ \\
+\hline
+\textbf{Tag 1 Status (S}$_{\mathrm{\mathbf{1}}}$\textbf{)}& 
+\textit{Present (S}$_{2}=$\textit{1)}& 
+\textit{Absent (S}$_{2}=$\textit{0)}& 
+\textit{Marginal} \\
+\hline
+\textit{Present (S}$_{1}=$\textit{1)}& 
+$\pi_{11}=1/K$& 
+$\pi_{10}=e^{\beta_{2}}/K$& 
+$q_{1}=(1+e^{\beta_{2}})/K$ \\
+\hline
+\textit{Absent (S}$_{1}=$\textit{0)}& 
+$\pi_{01}=e^{\beta_{1}}/K$& 
+${\pi_{00}=e}^{\beta_{1}+\beta_{2}+\alpha }/K$& 
+${{p_{1}=e}^{\beta_{1}}(1+e}^{\beta_{2}+\alpha })/K$ \\
+\hline
+\textit{Marginal}& 
+$q_{2}=(1+e^{\beta_{1}})/K$& 
+${{p_{2}=e}^{\beta_{2}}(1+e}^{\beta_{1}+\alpha })/K$& 
+$1$ \\
+\hline
+\end{tabular}
+\label{tab3}
+\end{center}
+\end{table}
+
+We define $p_{s_{3-i}}^{i}$to be the conditional probability that the 
+$i^{th}$ tag is lost given the other tag status is $s_{3-i}$:
+\[
+p_{i}^{s_{3-i}}=Pr\left( S_{i}=0\vert S_{3-i}=s_{3-i} \right)=\frac{e^{\beta 
+_{i}+\alpha {\bullet (1-s}_{3-i})}}{1+e^{\beta_{i}+\alpha {\bullet 
+(1-s}_{3-i})}}\thinspace \thinspace .
+\]
+Thus, $p_{i}^{0}=Pr\left( S_{i}=0\vert S_{3-i}=0 \right)=\frac{e^{\beta 
+_{i}+\alpha }}{1+e^{\beta_{i}+\alpha }}$ whereas, $p_{i}^{1}=Pr\left( 
+S_{i}=0\vert S_{3-i}=1 \right)=\frac{e^{\beta_{i}}}{1+e^{\beta_{i}}}$. The 
+conditional probability of tag retention is $q_{i}^{0}=1-p_{i}^{0}$ 
+and$\thinspace q_{i}^{1}=1-p_{i}^{1}$ Each joint probability can be 
+specified by the product of a marginal and a conditional probability: $\pi 
+_{11}=q_{1}^{1}q_{2}=q_{2}^{1}q_{1},\thinspace \thinspace \pi 
+_{10}=q_{1}(1-q_{2}^{1})$ and $\thinspace \pi_{01}=q_{2}(1-q_{1}^{1}).$
+
+Diefenbach et al (1998) and Rivalan et al. (2005) specified the joint 
+probabilities in Table 3 in a slightly different manner with $\pi_{01}=\pi 
+_{10}=p(1-p^{\ast })$, $\pi_{00}=pp^{\ast }$ and $\pi_{11}=1-2p+pp^{\ast 
+}$, where p is the marginal tag loss probability and $p*$ is the conditional 
+probability of losing a tag given the other tag was absent. Although not 
+stated, their conditional probability of losing a tag given the presence of 
+the other tag would be ${p(1-p^{\ast })} \mathord{\left/ {\vphantom 
+{{p(1-p^{\ast })} {(1-p)}}} \right. \kern-\nulldelimiterspace} {(1-p)}$. In 
+both papers the authors used separate functional forms for $p$ and $p*$ and 
+specified the independence model by using the same model for both 
+($p=p*)$. Their approach is viable but we believe it is preferable to have a 
+model with a parameter that controls dependence and with independence 
+specified simply as $\alpha =$0. As we show later this enables flexibility 
+in modeling and incorporating dependence. Our model was motivated by 
+Bradshaw et al. (2000) which used logistic regression and specified 
+dependence in tag loss via interactions and measured effects in terms of 
+odds multipliers. We note that they also provide a closed form estimator for 
+the model in Table 3 with no covariates and $\alpha =$0.
+
+As mentioned previously the probability structure for tag loss is quite 
+similar to capture-recapture (mark-recapture) for two occasions with a 
+closed population which has been used with two observers to measure 
+detection probability in visual surveys. When detection probability is 
+measured solely with the mark-recapture data, it is necessary to assume 
+independence between the detections by the two observers because those 
+missed by both observers ($n_{00})$ are obviously not included in the sample 
+(Borchers, 1999). Recently, the independence assumption was weakened 
+(Borchers et al., 2006; Laake, 1999; Laake, Dawson and Hone, 2008)(Laake and 
+Borchers 2004) in the combined mark-recapture and distance sampling by 
+including a dependence measure $\delta (x)$ which was estimated as the 
+discrepancy between the detection probability at distance $x$ measured by the 
+mark-recapture (double observer) data (based on independence) and the 
+distance sampling data. If $\delta (x)=$1 then independence at all 
+distances is achieved. Because detection probability at $x=$0 cannot be 
+measured from the distance sampling data, the independence assumption for 
+the mark-recapture data was required for $x=$0 ($\delta $(\textit{0})$=$1) but not for 
+the other distances. 
+
+The dependence structure we have defined for tag loss can be expressed in 
+terms of the $\delta $ dependence of Borchers et al. (2006). Under the 
+independence model (Table 2 excluding $n_{00})$, the probability that an 
+animal would retain at least one tag is:
+\[
+1-\pi_{00}^{\ast }=\frac{1+e^{\beta_{1}}+e^{\beta_{2}}}{1+e^{\beta 
+_{1}}+e^{\beta_{2}}+e^{\beta_{1}+\beta_{2}}}
+\]
+Likewise for the dependence model (Table 3):
+\[
+1-\pi_{00}=\frac{1+e^{\beta_{1}}+e^{\beta_{2}}}{1+e^{\beta_{1}}+e^{\beta 
+_{2}}+e^{\beta_{1}+\beta_{2}+\alpha }}
+\]
+The dependence of Borchers et al. (2006) is a ratio that measures the 
+distortion between the joint probabilities from the independence model 
+(Table 2) and the dependence model (Table 3) which can be expressed as:
+\[
+\delta =\frac{1-\pi_{00}^{\ast }}{1-\pi_{00}}=\frac{K}{K^{\ast 
+}}=1+\frac{e^{\beta_{1}+\beta_{2}}(e^{\alpha }-1)}{1+e^{\beta_{1}+\beta 
+_{2}}+e^{\beta_{1}}+e^{\beta_{2}}}=1+(e^{\alpha }-1)\pi_{00}^{\ast }
+\]
+The same relationship is obtained from $\delta =q_{i}^{1} \mathord{\left/ 
+{\vphantom {q_{i}^{1} q_{i}}} \right. \kern-\nulldelimiterspace} 
+q_{i}=\frac{K}{K^{\ast }}\thinspace $and from the ratio of any of the joint 
+probabilities other than for the (0,0) event which is not used in the 
+independence model. The dependence measure can also be expressed in terms of 
+covariance (Borchers 1999) which in this case can be expressed as:
+\[
+\delta 
+=1+\frac{\mathrm{cov}(S_{1},S_{2})}{q_{1}q_{2}}=1+\frac{\frac{1}{K}-q_{1}q_{2}}{q_{1}q_{2}}=\frac{\frac{1}{K}}{\frac{K^{\ast 
+}}{K^{2}}}=1+(e^{\alpha }-1)\pi_{00}^{\ast }
+\]
+In general there will likely be positive dependence in tag loss which means 
+$\alpha $\textgreater 0 and $\delta $\textgreater 1 but negative dependence 
+($\alpha $\textless 0) is possible with a lower bound of $\delta 
+$\textgreater 1-$\pi_{00}^{\ast }$
+
+The joint probabilities can be rewritten in terms of $\delta $ as: $\pi 
+_{11}=\delta q_{1}q_{2},\thinspace \thinspace \pi_{10}=q_{1}(1-\delta 
+q_{2})$ and $\thinspace \pi_{01}=q_{2}\left( 1-\delta q_{1} \right)$ or as 
+$\pi_{11}=q_{1}^{1}q_{2}^{1}/\delta ,\thinspace \thinspace \pi 
+_{10}=q_{1}^{1}p_{2}^{1}/\delta $ and $\pi_{01}=q_{2}^{1}p_{1}^{1}/\delta 
+$. The latter form makes it obvious that once you exclude $n_{00}$ and 
+condition on the observed data, the $\delta $ will cancel from the rescaled 
+joint probabilities which will only be functions of the $q_{i}^{1}$. This is 
+also obvious by examining Table 3 and noting that the joint probabilities 
+for the observed set of data ($n_{11}n_{10}n_{01})$ would only be functions 
+of $\beta_{i}$ after conditioning on the exclusion of $n_{00}$. The same 
+result was shown by Borchers et al. (2006) for mark-recapture distance 
+sampling (mrds) but in that case $\delta $ could be estimated from the 
+observed distances. For tag loss estimation, there is no equivalent 
+ancillary data; however, there are various ways that dependence can be 
+incorporated to improve tag loss estimation. 
+
+The most obvious and best way to incorporate dependence is to mark a subset 
+of the animals with a permanent mark so for a subset of the data $n_{00}$ is 
+observable. For example, all captured black bears in Pennsylvania were given 
+2 ear tags but some of the bears were also given a permanent unique lip 
+tattoo (Diefenbach et al. 1998) which could be used to identify bears that 
+had lost both ear tags. The likelihood for the tagged only 
+($n_{11}n_{10}n_{01})$ would be:
+\[
+L\left( {\beta_{1},\beta_{2}}\thinspace\vert\thinspace 
+{n_{10},n_{01},n_{11}}\right) \propto \prod\limits_{\omega =11,01,10} \left( 
+\frac{\pi_{\omega }}{1-\pi_{00}} \right)^{n_{\omega }} 
+\]
+and for the tagged and marked: ($n_{11}^{m}n_{01}^{m}n_{10}^{m}n_{00}^{m})$: 
+\[
+L\left( {\beta_{1},\beta_{2},\alpha }\thinspace\vert\thinspace 
+{n_{11}^{m},n_{10}^{m},n_{01}^{m},n_{00}^{m}}\right) \propto 
+\prod\limits_{\omega =11,01,10,00} \pi_{\omega }^{n_{\omega }^{m}} 
+\]
+The combined likelihood for the data could improve on the precision of the 
+tag loss estimates while adjusting for dependence measured from the 
+permanently marked bears. In the absence of data on permanently marked 
+animals, a Bayesian alternative could be used in which a prior distribution 
+for $\alpha $ or $\delta $ could be used with the likelihood for the tagged 
+only bears. Preferably the prior would be data-derived from a similar 
+species and situation. 
+
+Next we consider incorporating dependence for situations in which all of the 
+animals are double-tagged and we cannot observe animals that lose both tags. 
+On the surface this appears to be impossible because there is no ancillary 
+data as with mrds. However, we can replace the role of ancillary data with 
+models that restrict the dependence and still provide estimable parameters. 
+For example, consider California sea lions which have a tag applied to both 
+fore-flippers as pups. Initially, tag loss may be due to manufacturing or 
+application defects which may be independent between tags; however, as the 
+animal grows, the expansion of the fore-flipper may put pressure on the tag 
+causing the tag to split or may cause tissue damage that allows the tag to 
+fall out. Because growth is symmetric, if one tag is lost the other is also 
+more likely to be lost. Thus, we could propose a model in which $\alpha 
+=$0 for the first year but not subsequent years. As long as tag loss 
+parameters $\beta_{i}$ are age-invariant then any dependence beyond the 
+first year can be estimated. Conceptually, this is similar to having a 
+subset of animals with a permanent mark but instead we have a subset of 
+animals for which it is reasonable to assume independence holds. 
+
+\textbf{Literature Cited}
+
+Borchers, D. L., Laake, J. L., Southwell, C., and Paxton, C. G. M. (2006). 
+Accommodating unmodeled heterogeneity in double-observer distance sampling 
+surveys. \textit{Biometrics} \textbf{62}, 372-378.
+
+Laake, J. (1999). Distance sampling with independent observers: Reducing 
+bias from heterogeneity by weakening the conditional independence 
+assumption. In \textit{Marine Mammal Survey and Assessment Methods}, 137-148. Rotterdam: A A BALKEMA.
+
+Laake, J., Dawson, M. J., and Hone, J. (2008). Visibility bias in aerial 
+survey: mark-recapture, line-transect or both? \textit{Wildlife Research} \textbf{35}, 299-309.
+
+Borchers, D. L. (1999). Composite mark-recapture line transect surveys. In 
+\textit{Marine Mammal Survey and Assessment Methods}, 115-126. Rotterdam: A A BALKEMA.
+
+Borchers, D. L., Laake, J. L., Southwell, C., and Paxton, C. G. M. (2006). 
+Accommodating unmodeled heterogeneity in double-observer distance sampling 
+surveys. \textit{Biometrics} \textbf{62}, 372-378.
+
+Bradshaw, C. J. A., Barker, R. J., and Davis, L. S. (2000). Modeling tag 
+loss in New Zealand fur seal pups. \textit{Journal of Agricultural Biological and Environmental Statistics} \textbf{5}, 475-485.
+
+Diefenbach, D. R., and Alt, G. L. (1998). Modeling and evaluation of ear tag 
+loss in black bears. \textit{Journal of Wildlife Management} \textbf{62}, 1292-1300.
+
+Pistorius, P. A., Bester, M. N., Kirkman, S. P., and Boveng, P. L. (2000). 
+Evaluation of age- and sex-dependent rates of tag loss in southern elephant 
+seals. \textit{Journal of Wildlife Management} \textbf{64}, 373-380.
+
+Rivalan, P., Godfrey, M. H., Prevot-Julliard, A. C., and Girondot, M. 
+(2005). Maximum likelihood estimates of tag loss in leatherback sea turtles. 
+\textit{Journal of Wildlife Management} \textbf{69}, 540-548.
+
+Siniff, D. B., and Ralls, K. (1991). Reproduction, Survival and Tag Loss in 
+California Sea Otters. \textit{Marine Mammal Science} \textbf{7}, 211-229.
+
+Alt, G. L., C. R. McClaughlin, and K. H. Pollock. 1985. Ear tag loss by 
+black bears in Pennsylvania. Journal of Wildlife Management 49:316-320.
+
+Arnason, A. N., and K. H. Mills. 1981. Bias and loss of precision due to tag 
+loss in Jolly-Seber estimates for mark-recapture experiments. Canadian 
+Journal of Fisheries and Aquatic Sciences 38:1077-1095.
+
+Bradshaw, C. J. A., Barker, R. J., and Davis, L. S. (2000). Modeling tag 
+loss in New Zealand fur seal pups. Journal of Agricultural, Biological, and 
+Environmental Statistics 5:475--485.
+
+Cowen, L., and C. J. Schwartz. 2006. The Jolly-Seber model with tag loss. 
+Biometrics 62:699-705.
+
+Fabrizio MC, Nichols JD, Hines JE, Swanson BL, Schram ST. 1999. Modeling 
+data from double-tagging experiments to estimate heterogeneous rates of tag 
+shedding in lake trout (\textit{Salvelinus namaycush}). Canadian Journal of Fisheries and Aquatic 
+Sciences 56:1409-1419.
+
+Fosgate GT, Adesiyun AA, Hird DW. 2006. Ear-tag retention and identification 
+methods for extensively managed water buffalo (\textit{Bubalus bubalis}) in Trinidad. Preventive 
+Veterinary Medicine 73:287-296.
+
+Pollock KH (Pollock, Kenneth H.), Yoshizaki J (Yoshizaki, Jun), Fabrizio MC 
+(Fabrizio, Mary C.), Schram ST (Schram, Stephen T.). 2007. Factors affecting 
+survival rates of a recovering lake trout population estimated by 
+mark-recapture in Lake Superior, 1969-1996. Transactions of the American 
+Fisheries Society 136:185-194.
+
+Rotella, J. J., and J. E. Hines. 2005. Effects of tag loss on direct 
+estimates of population growth rate. Ecology 86:821-827.
+
+Stevick PT, Palsboll PJ, Smith TD, Bravington MV, Hammond PS. 2001. Errors 
+in identification using natural markings: rates, sources, and effects on 
+capture-recapture estimates of abundance. Canadian Journal of Fisheries and 
+Aquatic Sciences 58:1861-1870.
+
+\end{document}
