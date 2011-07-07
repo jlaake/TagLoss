@@ -1,0 +1,10 @@
+Package: tagloss
+Type: Package
+Title: Estimation of tag loss rates with dependence
+Version: 1.0
+Date: 2011-03-02
+Author: Jeff Laake
+Maintainer: Jeff Laake <Jeff.Laake@noo.gov>
+Description: Tag loss code - under development
+License: GPL-2
+LazyLoad: yes
