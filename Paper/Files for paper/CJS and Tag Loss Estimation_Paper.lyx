@@ -1,0 +1,6986 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\begin_preamble
+
+\usepackage{amsthm}
+\usepackage{epsfig}
+\usepackage{psfrag}
+\usepackage{lineno}
+
+\usepackage{pdflscape}
+%\setlength{\evensidemargin}{0in} \setlength{\oddsidemargin}{0in}
+%\setlength{\topmargin}{0.0in} \setlength{\textwidth}{6.5in}
+%\setlength{\textheight}{9in} \setlength{\topskip}{0in}
+%\setlength{\headheight}{0in} \setlength{\headsep}{0in}
+\usepackage[labelfont=bf,labelsep=period]{caption}
+\end_preamble
+\use_default_options true
+\begin_modules
+knitr
+\end_modules
+\maintain_unincluded_children false
+\begin_local_layout
+
+\end_local_layout
+\language english
+\language_package none
+\inputencoding latin9
+\fontencoding default
+\font_roman times
+\font_sans default
+\font_typewriter default
+\font_default_family rmdefault
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize 12
+\spacing double
+\use_hyperref false
+\papersize default
+\use_geometry true
+\use_amsmath 2
+\use_esint 1
+\use_mhchem 0
+\use_mathdots 0
+\cite_engine natbib_authoryear
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+
+\series bold
+Hidden Markov Model for Dependent Tag Loss and Survival Estimation
+\end_layout
+
+\begin_layout Author
+Laake, Johnson, Diefenbach, Ternent
+\end_layout
+
+\begin_layout Section*
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+setlength{
+\backslash
+textheight}{575pt}
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+setlength{
+\backslash
+textheight}{575pt}
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+setlength{
+\backslash
+baselineskip}{24pt}
+\end_layout
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Section*
+
+\size normal
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+linenumbers
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Abstract
+Most mark-recapture estimators of population parameters assume no tag loss
+ occurs or else the estimator will be biased.
+ One approach to address this problem has been to double-tag animals to
+ estimate tag loss under the assumption that loss of one tag is independent
+ of the other, but if this assumption is violated then estimators will still
+ be biased.
+ Typically, the estimates of tag loss have been used to make a correction
+ to survival estimates derived from a Cormack-Jolly-Seber (CJS).
+ We developed an approach to incorporate tag loss into the CJS model using
+ a hidden Markov model (HMM) framework that can be used with single or double-ta
+gged animals.
+ The model we developed relies on a subset of tagged animals fitted with
+ permanent, individually identifiable marks to estimate tag loss rates.
+ Also, the model can test the assumption of independence and model dependence
+ of tag loss as a function of covariates.
+ We demonstrate through computer simulation that the HMM can estimate the
+ true survival rate in the presence of tag loss and can estimate the lack
+ of independence with a slight loss in precision that is a function of the
+ proportion that are permanently marked.
+ We illustrate use of the model with a dataset of double-tagged black bears
+ (
+\shape italic
+Ursus americanus
+\shape default
+) permanently marked with tattoos, in which we treat a randomly-selected
+ subset as lacking a permanent mark.
+ We analyzed the bear data as if only one tag was applied, and using both
+ tags, and showed that the HMM framework accounted for tag loss and annual
+ survival estimates among sex-age classes (
+\begin_inset Formula $\phi$
+\end_inset
+
+ = 0.099–0.806).
+ When both tags were used the estimates of survival were reduced by 0.005–0.035
+ when there were no permanently marked animals because of dependence.
+ When only a single tag was used without a sample of permanent marks, the
+ estimates of survival were reduced by 0.01 to 0.09 because it was not possible
+ to adjust for tag loss.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<code,echo=FALSE,results="hide">>=
+\end_layout
+
+\begin_layout Plain Layout
+
+detach("package:RMark")
+\end_layout
+
+\begin_layout Plain Layout
+
+suppressMessages(library(marked))
+\end_layout
+
+\begin_layout Plain Layout
+
+suppressMessages(library(expm))
+\end_layout
+
+\begin_layout Plain Layout
+
+suppressMessages(library(Hmisc))
+\end_layout
+
+\begin_layout Plain Layout
+
+suppressMessages(library(xtable))
+\end_layout
+
+\begin_layout Plain Layout
+
+run_examples=FALSE
+\end_layout
+
+\begin_layout Plain Layout
+
+load("C:
+\backslash
+
+\backslash
+Users
+\backslash
+
+\backslash
+JLaake
+\backslash
+
+\backslash
+git
+\backslash
+
+\backslash
+TagLoss
+\backslash
+
+\backslash
+Paper
+\backslash
+
+\backslash
+.Rdata") 
+\end_layout
+
+\begin_layout Plain Layout
+
+#source("bear_data_analysis.r")
+\end_layout
+
+\begin_layout Plain Layout
+
+options(width=120)
+\end_layout
+
+\begin_layout Plain Layout
+
+singlep=rbind(singletag_results[[48]]$results$reals$p[1:20,],singletag_results[[
+48]]$results$reals$p[20,],singletag_results[[48]]$results$reals$p[21:43,])
+\end_layout
+
+\begin_layout Plain Layout
+
+singlep[21,4:7]=NA
+\end_layout
+
+\begin_layout Plain Layout
+
+colnames(singletag_results$model.table)[-c(3,6,7)]=c("Model","# par", "Delta
+ AIC" ,"Weight")
+\end_layout
+
+\begin_layout Plain Layout
+
+pdf("p_plot.pdf")
+\end_layout
+
+\begin_layout Plain Layout
+
+barplot(t(cbind(singlep$estimate[seq(1,44,4)],singlep$estimate[seq(2,44,4)],sing
+lep$estimate[seq(3,44,4)],singlep$estimate[seq(4,44,4)])),beside=T,names.arg=2003
+:2013,xlab="Year",ylab="Capture probability",legend.text=c("Female age 2","Female
+ age 3+","Male age 2","Male age 3+"),args.legend=c(x=35,y=.9))
+\end_layout
+
+\begin_layout Plain Layout
+
+dev.off()
+\end_layout
+
+\begin_layout Plain Layout
+
+best_single=as.numeric(row.names(singletag_results$model.table)[1])
+\end_layout
+
+\begin_layout Plain Layout
+
+single_survival=singletag_results[[best_single]]$results$reals$Phi
+\end_layout
+
+\begin_layout Plain Layout
+
+best_single0=as.numeric(row.names(singletag_results0$model.table)[1])
+\end_layout
+
+\begin_layout Plain Layout
+
+single0_survival=singletag_results0[[best_single0]]$results$reals$Phi
+\end_layout
+
+\begin_layout Plain Layout
+
+colnames(single_survival)=c("Age class", "Sex", "Estimate","Std Error",
+ "Lower CL", "Upper CL")
+\end_layout
+
+\begin_layout Plain Layout
+
+colnames(single0_survival)=colnames(single_survival)
+\end_layout
+
+\begin_layout Plain Layout
+
+single_survival=rbind(single_survival,single0_survival)
+\end_layout
+
+\begin_layout Plain Layout
+
+single_survival=cbind(c("50% permanently marked",NA,NA,NA,"0% permanently
+ marked",NA,NA,NA),single_survival)
+\end_layout
+
+\begin_layout Plain Layout
+
+best_double=as.numeric(row.names(doubletag_results$model.table)[1])
+\end_layout
+
+\begin_layout Plain Layout
+
+double_survival=doubletag_results[[best_double]]$results$reals$Phi
+\end_layout
+
+\begin_layout Plain Layout
+
+best_double0=as.numeric(row.names(doubletag_results0$model.table)[1])
+\end_layout
+
+\begin_layout Plain Layout
+
+double0_survival=doubletag_results0[[best_double0]]$results$reals$Phi
+\end_layout
+
+\begin_layout Plain Layout
+
+colnames(double_survival)=c("Age class", "Sex", "Estimate","Std Error",
+ "Lower CL", "Upper CL")
+\end_layout
+
+\begin_layout Plain Layout
+
+colnames(double0_survival)=colnames(double_survival)
+\end_layout
+
+\begin_layout Plain Layout
+
+double_survival=rbind(double_survival,double0_survival)
+\end_layout
+
+\begin_layout Plain Layout
+
+double_survival=cbind(c("50% permanently marked",NA,NA,NA,"0% permanently
+ marked",NA,NA,NA),double_survival)
+\end_layout
+
+\begin_layout Plain Layout
+
+colnames(single_survival)[1]=""
+\end_layout
+
+\begin_layout Plain Layout
+
+colnames(double_survival)[1]=""
+\end_layout
+
+\begin_layout Plain Layout
+
+doubletag_results$model.table[,1]=gsub(" ","",doubletag_results$model.table[,1])
+\end_layout
+
+\begin_layout Plain Layout
+
+doubletag_results$model.table[,1]=gsub("tau
+\backslash
+
+\backslash
+("," tau
+\backslash
+
+\backslash
+(",doubletag_results$model.table[,1])
+\end_layout
+
+\begin_layout Plain Layout
+
+doubletag_results$model.table[,1]=gsub("p
+\backslash
+
+\backslash
+("," p
+\backslash
+
+\backslash
+(",doubletag_results$model.table[,1])
+\end_layout
+
+\begin_layout Plain Layout
+
+lines=strwrap(doubletag_results$model.table[,1],width=70,simplify=F)[1:20]
+\end_layout
+
+\begin_layout Plain Layout
+
+pos=c(1,1+cumsum(sapply(lines,length)))[-21]
+\end_layout
+
+\begin_layout Plain Layout
+
+all.lines=unlist(lines)
+\end_layout
+
+\begin_layout Plain Layout
+
+all.lines=cbind(Model=rep(NA,length(all.lines)),Model=all.lines,"# par"=rep(NA,leng
+th(all.lines)), "Delta AIC"=rep(NA,length(all.lines)),Weight=rep(NA,length(all.line
+s)))
+\end_layout
+
+\begin_layout Plain Layout
+
+all.lines[pos,1]=1:20
+\end_layout
+
+\begin_layout Plain Layout
+
+all.lines[pos,3]=doubletag_results$model.table[1:20,2]
+\end_layout
+
+\begin_layout Plain Layout
+
+all.lines[pos,4]=sprintf(fmt="%.3f",doubletag_results$model.table[1:20,4])
+\end_layout
+
+\begin_layout Plain Layout
+
+all.lines[pos,5]=sprintf(fmt="%.3f",doubletag_results$model.table[1:20,5])
+\end_layout
+
+\begin_layout Plain Layout
+
+constant_tau=grep("tau
+\backslash
+
+\backslash
+(
+\backslash
+
+\backslash
+~1",as.character(singletag_results$model.table$Model))
+\end_layout
+
+\begin_layout Plain Layout
+
+age_tau=grep("tau
+\backslash
+
+\backslash
+(
+\backslash
+
+\backslash
+~tagAge",as.character(singletag_results$model.table$Model))
+\end_layout
+
+\begin_layout Plain Layout
+
+sexage_phi=grep("Phi
+\backslash
+
+\backslash
+(
+\backslash
+
+\backslash
+~ageclass1 
+\backslash
+
+\backslash
+* sex",as.character(singletag_results$model.table$Model)) 
+\end_layout
+
+\begin_layout Plain Layout
+
+sexage_phi=c(sexage_phi,grep("Phi
+\backslash
+
+\backslash
+(
+\backslash
+
+\backslash
+~ageclass 
+\backslash
+
+\backslash
+* sex",as.character(singletag_results$model.table$Model))) 
+\end_layout
+
+\begin_layout Plain Layout
+
+additive_phi=grep("Phi
+\backslash
+
+\backslash
+(
+\backslash
+
+\backslash
+~ageclass1 
+\backslash
+
+\backslash
++ sex",as.character(singletag_results$model.table$Model)) 
+\end_layout
+
+\begin_layout Plain Layout
+
+additive_phi=c(additive_phi,grep("Phi
+\backslash
+
+\backslash
+(
+\backslash
+
+\backslash
+~ageclass 
+\backslash
+
+\backslash
++ sex",as.character(singletag_results$model.table$Model))) 
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\size normal
+\begin_inset FormulaMacro
+\newcommand{\baselinestretch}{1.0}
+\end_inset
+
+ 
+\begin_inset FormulaMacro
+\renewcommand{\baselinestretch}{1.0}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+
+\series bold
+Introduction
+\end_layout
+
+\begin_layout Standard
+Mark-recapture estimators assume recaptures of marked individuals are always
+ detected (
+\begin_inset CommandInset citation
+LatexCommand citealt
+key "seber1982"
+
+\end_inset
+
+) which is violated when animals lose marks.
+ Current methods of marking many different species indicate that problems
+ with mark retention occur with small mammals (
+\begin_inset CommandInset citation
+LatexCommand citealt
+key "fokidis2006"
+
+\end_inset
+
+), large terrestrial mammals (
+\begin_inset CommandInset citation
+LatexCommand citealt
+key "Fosgate2006"
+
+\end_inset
+
+), aquatic mammals (
+\begin_inset CommandInset citation
+LatexCommand citealt
+key "Bradshaw2000"
+
+\end_inset
+
+), fish (
+\begin_inset CommandInset citation
+LatexCommand citealt
+key "Cowen2006"
+
+\end_inset
+
+), and reptiles (
+\begin_inset CommandInset citation
+LatexCommand citealt
+key "Rivalan2005"
+
+\end_inset
+
+).
+ If the assumption that no marks are lost is violated then estimates of
+ population parameters (e.g., survival and abundance) will be biased (
+\begin_inset CommandInset citation
+LatexCommand citealt
+key "Arnason1981"
+
+\end_inset
+
+, 
+\begin_inset CommandInset citation
+LatexCommand citealt
+key "Diefenbach1998"
+
+\end_inset
+
+).
+ Marked animals that lose all marks become part of the unmarked population
+ and mark loss is equivalent to death in a survival analysis.
+ Even if an estimator is robust to violation of this assumption, the loss
+ of marks will reduce the parameter estimator precision because of the apparent
+ reduction in sample size (
+\begin_inset CommandInset citation
+LatexCommand citealt
+key "Rotella2005"
+
+\end_inset
+
+).
+ Using natural markings can avoid tag loss with low error rates (
+\begin_inset CommandInset citation
+LatexCommand citealt
+key "Stevick2001"
+
+\end_inset
+
+), but not all species can be monitored in this manner.
+ Consequently, methods of estimating tag loss will be necessary until new
+ technologies are developed that eliminate loss.
+ 
+\end_layout
+
+\begin_layout Standard
+Historically, animals have been double-marked and the status of marks upon
+ recapture (none or one mark missing) have been used to estimate mark loss
+ under the assumption that each mark is lost independently of the other
+ mark (
+\begin_inset CommandInset citation
+LatexCommand citealt
+key "bh1957"
+
+\end_inset
+
+, 
+\begin_inset CommandInset citation
+LatexCommand citealt
+key "seber1982"
+
+\end_inset
+
+).
+ This independence assumption is required because an animal that lost both
+ marks is not observable upon recature.
+ In recent studies, however, where the opportunity has occurred to observe
+ loss of both tags via the use of a third permanent mark, the independence
+ assumption has been shown to be invalid (
+\begin_inset CommandInset citation
+LatexCommand citealt
+key "Siniff1991"
+
+\end_inset
+
+, 
+\begin_inset CommandInset citation
+LatexCommand citealt
+key "Diefenbach1998"
+
+\end_inset
+
+, 
+\begin_inset CommandInset citation
+LatexCommand citealt
+key "Bradshaw2000"
+
+\end_inset
+
+, 
+\begin_inset CommandInset citation
+LatexCommand citealt
+key "Rivalan2005"
+
+\end_inset
+
+, 
+\begin_inset CommandInset citation
+LatexCommand citealt
+key "McMahon2009"
+
+\end_inset
+
+).
+ These studies undermine the credibility of tag loss evaluations for situations
+ in which loss of both marks is not observable (
+\begin_inset CommandInset citation
+LatexCommand citealt
+key "Pistorius2000"
+
+\end_inset
+
+).
+ Consequently, it is important to incorporate appropriate models of mark
+ loss to reduce bias in estimates of population parameters, even if modeling
+ tag loss results in reduced precision (e.g., 
+\begin_inset CommandInset citation
+LatexCommand citealt
+key "Pollock2007"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Standard
+Not all species can be easily given a permanent individually identifiable
+ mark or doing so can be prohibitively expensive.
+ Thus, it makes sense to consider models which allow a sub-sample of individuals
+ to be permanently marked.
+ A variety of permanent marks including PIT tags (
+\begin_inset CommandInset citation
+LatexCommand citealt
+key "Gibbons2004"
+
+\end_inset
+
+), hot brands (
+\begin_inset CommandInset citation
+LatexCommand citealt
+key "Merrick1996a"
+
+\end_inset
+
+), or natural marks (
+\begin_inset CommandInset citation
+LatexCommand citealt
+key "Mackey2008"
+
+\end_inset
+
+, 
+\begin_inset CommandInset citation
+LatexCommand citealt
+key "Hastings2012"
+
+\end_inset
+
+) could be used depending on the recapture/resight method.
+ We describe a modelling approach for tag loss that uses a sample of animals
+ with a permanent mark to estimate tag loss for single tagging and to incorporat
+e dependence in tag loss for double-tagging.
+ We integrate the tag loss modelling into a Cormack-Jolly-Seber (CJS) framework
+ using hidden Markov models (HMM) to provide estimates of survival in the
+ presence of tag loss.
+ 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "McMahon2009"
+
+\end_inset
+
+ developed a similar approach with multi-state modelling in MARK (
+\begin_inset CommandInset citation
+LatexCommand citealt
+key "White1999"
+
+\end_inset
+
+) but the specification of state transitions for tag loss were less direct
+ than our model and required an additional and unnecessary dummy parameter
+ to specify independence.
+ 
+\end_layout
+
+\begin_layout Standard
+We apply our model to capture-recapture data on 305 yearling and older black
+ bears (
+\shape italic
+Ursus americanus
+\shape default
+) from Pennsylvania.
+ Bears were captured and marked over a 12 year period, 2002-2013.
+ Each newly-captured bear was given a metal tag, style 56-L, size 36.5 ×
+ 9.5 mm (Hasco Tag Company, Dayton, Kentucky) in each ear and a permanent
+ lip tattoo; however for our purposes we randomly selected one-half as permanent
+ly marked.
+ Upon recapture, the status (present/missing) of each tag was recorded and
+ the bear was released.
+ If a bear was missing both tags and was not selected as part of the permanently
+ marked sample, its capture history was modified (i.e.
+ treated as not seen) because it would have not been recognized if it had
+ both ear tags missing.
+ Additionaly, to demonstrate single tag loss models with these data we used
+ the left tag status and ignored the right tag.
+ 
+\end_layout
+
+\begin_layout Standard
+The models we propose herein have been added to the package 
+\begin_inset Quotes eld
+\end_inset
+
+marked
+\begin_inset Quotes erd
+\end_inset
+
+ (
+\begin_inset CommandInset citation
+LatexCommand citealt
+key "Laake2013"
+
+\end_inset
+
+) for the R statistical environment (
+\begin_inset CommandInset citation
+LatexCommand citealt
+key "RDevelopmentCoreTeam2012"
+
+\end_inset
+
+).
+ Details for fitting tag loss models with the package are provided with
+ an example using simulated data in the supplemental material.
+ Also in the supplemental material are simulation results which demonstrate
+ the model and code work, that negative bias in survival occurs when tag
+ loss events are dependent and no permanent marks are available to model
+ the dependence, and the expected precision of survival as a function of
+ the proportion of animals that are permanently marked and the average capture
+ probability.
+ The black bear data and code for fitting the models and generating the
+ simulations are also provided as files with the supplemental material.
+ 
+\end_layout
+
+\begin_layout Section*
+
+\series bold
+Single-Tag Loss CJS Models
+\end_layout
+
+\begin_layout Standard
+We start with a situation in which each animal is given a single tag but
+ a subsample is also given an additional permanent individual mark.
+ We define the indicator variable 
+\begin_inset Formula $I_{M}$
+\end_inset
+
+ to be 1 if the animal has a permanent mark and 0 if not.
+ The animals are released and then recaptured at a set of occasions as in
+ a standard CJS framework.
+ We will assume that recapture of animals does not depend on their tag status
+ (e.g., animals are physically caught and then examined for marks).
+ At each occasion, the released animal can be in any one of 
+\begin_inset Formula $m$
+\end_inset
+
+ = 3 states: 1) state 1 where animal is alive and has retained its tag,
+ 2) state 0 where the animal is alive but has lost its tag, and 3) state
+ Dead where the animal is dead.
+ An encounter history string for each animal is constructed using one of
+ 3 values: 
+\begin_inset Quotes eld
+\end_inset
+
++
+\begin_inset Quotes erd
+\end_inset
+
+ when an animal is encountered alive with its tag, 
+\begin_inset Quotes eld
+\end_inset
+
+-
+\begin_inset Quotes erd
+\end_inset
+
+ when a permanently marked animal is encountered without its tag, and 0
+ for animals that are not encountered which would include a previously tagged
+ animal without a permanent mark that had lost its tag.
+ We define 
+\begin_inset Formula $\phi$
+\end_inset
+
+ to be the probability of surviving the interval between occasions, 
+\begin_inset Formula $\tau$
+\end_inset
+
+ the probability of losing the tag during an interval, and 
+\begin_inset Formula $p$
+\end_inset
+
+ to be the probability of encountering a live animal.
+ 
+\end_layout
+
+\begin_layout Standard
+In specifying the HMM model we follow the notation used by 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Laake2013a"
+
+\end_inset
+
+.
+ At time 
+\begin_inset Formula $t$
+\end_inset
+
+, the state is 
+\begin_inset Formula $C_{t}$
+\end_inset
+
+ and the observation is 
+\begin_inset Formula $X_{t}$
+\end_inset
+
+.
+ For the single tag loss model, the states 
+\begin_inset Formula $C_{t}$
+\end_inset
+
+ are 1 (alive with tag present), 0 (alive with tag missing) and dead.
+ The observations 
+\begin_inset Formula $X_{t}$
+\end_inset
+
+ are either + which means the tag was present, - when the tag was missing
+ on a permanently marked animal and 0 otherwise.
+ For animals without a permanent mark, the only possible observations are
+ + and 0.
+ A hidden Markov model is fully specified with two matrices: 1) 
+\begin_inset Formula $\Gamma$
+\end_inset
+
+, the 
+\begin_inset Formula $m\times m$
+\end_inset
+
+ one-step state transition probability matrix and 2) 
+\begin_inset Formula $\boldsymbol{D}$
+\end_inset
+
+ the 
+\begin_inset Formula $s\times m$
+\end_inset
+
+ state-dependent observation probability matrix.
+ The elements of 
+\begin_inset Formula $\Gamma$
+\end_inset
+
+ (Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:CJS Transition matrix-singletag"
+
+\end_inset
+
+), 
+\begin_inset Formula $\gamma_{ij}$
+\end_inset
+
+, are the probabilities of transitioning from state 
+\begin_inset Formula $i$
+\end_inset
+
+ to state 
+\begin_inset Formula $j$
+\end_inset
+
+.
+ The elements 
+\begin_inset Formula $d_{ik}$
+\end_inset
+
+ of 
+\begin_inset Formula $\boldsymbol{D}$
+\end_inset
+
+ (Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:CJS Observation matrix-singletag"
+
+\end_inset
+
+) are 
+\begin_inset Formula $Pr(X_{t}=i|C_{t}=k)$
+\end_inset
+
+ where 
+\begin_inset Formula $i=1,\ldots,\, s$
+\end_inset
+
+ is a sequential index for the observations and 
+\begin_inset Formula $k=1,\ldots,\, m$
+\end_inset
+
+ is a state index.
+\end_layout
+
+\begin_layout Section*
+
+\series bold
+Double-Tag Loss CJS Models
+\end_layout
+
+\begin_layout Standard
+If each animal is given two tags and tags loss events are independent, then
+ it is possible to estimate the probability that both tags are lost and
+ the estimated survival can be corrected (
+\begin_inset CommandInset citation
+LatexCommand citealt
+key "Rotella2005"
+
+\end_inset
+
+).
+ However, recent studies have shown that tag loss events are likely to be
+ dependent and models based on the independence assumption will underestimate
+ double tag loss (
+\begin_inset CommandInset citation
+LatexCommand citealt
+key "Diefenbach1998"
+
+\end_inset
+
+, 
+\begin_inset CommandInset citation
+LatexCommand citealt
+key "McMahon2009"
+
+\end_inset
+
+).
+ We can model the dependence in tag loss events if some of the animals that
+ lose both tags are observable because they have a separate permanent mark.
+\end_layout
+
+\begin_layout Standard
+With 2 tags, let 
+\series bold
+S
+\series default
+ 
+\begin_inset Formula $=$
+\end_inset
+
+ (
+\begin_inset Formula $S_{\mathrm{1}}$
+\end_inset
+
+, 
+\begin_inset Formula $S_{\mathrm{2}})$
+\end_inset
+
+ represent the state vector of the status of the 2 tags where 
+\begin_inset Formula $S_{i}$
+\end_inset
+
+ is a '1' if the 
+\begin_inset Formula $i^{th}$
+\end_inset
+
+ tag is present and '0' if the 
+\begin_inset Formula $i^{th}$
+\end_inset
+
+ tag is absent (lost) (note: this is different from the convention of 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Diefenbach1998"
+
+\end_inset
+
+, 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Bradshaw2000"
+
+\end_inset
+
+ and 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Rivalan2005"
+
+\end_inset
+
+ who use 1 to denote a tag loss event).
+ Usually the tagged animals can only be identified if one or more tags are
+ retained and animals that have lost both tags (
+\series bold
+S
+\series default
+ 
+\begin_inset Formula $=$
+\end_inset
+
+ (0,0)) are not observable.
+ However, with a sample of permanently marked animals, the '00' state is
+ observable for those animals.
+ Instead of assuming independence, we cast a model motivated by 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Bradshaw2000"
+
+\end_inset
+
+ with a parameter that controls whether tag loss is dependent or independent.
+ 
+\end_layout
+
+\begin_layout Standard
+We model the tag loss probability odds with a logit link function which
+ enables use of covariates and incorporating dependence in tag fates.
+ The conditional odds of losing the 
+\begin_inset Formula $i^{th}$
+\end_inset
+
+ tag (
+\begin_inset Formula $S_{i}=$
+\end_inset
+
+0) given the other tag is present (
+\begin_inset Formula $S_{3-i\thinspace}=$
+\end_inset
+
+1) is 
+\begin_inset Formula $e^{\beta_{i}}$
+\end_inset
+
+ and the conditional odds of losing the 
+\begin_inset Formula $i^{th}$
+\end_inset
+
+ tag (
+\begin_inset Formula $S_{i}=$
+\end_inset
+
+0) given other tag is absent (
+\begin_inset Formula $S_{3-i}=$
+\end_inset
+
+0) is 
+\begin_inset Formula $e^{\beta_{i}+\beta_{3}}$
+\end_inset
+
+ where 
+\begin_inset Formula $\beta_{3}$
+\end_inset
+
+ determines the amount of dependence.
+ If 
+\begin_inset Formula $\beta_{3}=$
+\end_inset
+
+0 we have independence.
+ The joint probabilities for double tag status, 
+\begin_inset Formula $\tau_{s_{1}s_{2}\thinspace}=Pr(S_{1}=s_{1},\, S_{2}=s_{2})$
+\end_inset
+
+ and the marginal probabilities (
+\begin_inset Formula $i^{th}$
+\end_inset
+
+ tag loss 
+\begin_inset Formula $\tau_{i}=Pr(S_{i}=0)$
+\end_inset
+
+, 
+\begin_inset Formula $i^{th}$
+\end_inset
+
+ tag retention 
+\begin_inset Formula $1-\tau_{i}=Pr(S_{i}=1)$
+\end_inset
+
+) are shown in Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:dep_table-logit"
+
+\end_inset
+
+.
+ The tag loss odds can be constructed from the conditional probabilities
+ 
+\begin_inset Formula $\tau_{i}^{0}=Pr\left(S_{i}=0\vert S_{3-i}=0\right)=\frac{e^{\beta_{i}+\beta_{3}}}{1+e^{\beta_{i}+\beta_{3}}}$
+\end_inset
+
+ and 
+\begin_inset Formula $\tau_{i}^{1}=Pr\left(S_{i}=0\vert S_{3-i}=1\right)=\frac{e^{\beta_{i}}}{1+e^{\beta_{i}}}$
+\end_inset
+
+.
+ The odds of losing tag 2 (
+\begin_inset Formula $S_{2}=$
+\end_inset
+
+0) given tag 1 is present (
+\begin_inset Formula $S_{1}=$
+\end_inset
+
+1) is 
+\begin_inset Formula $\tau_{2}^{1}/(1-\tau_{2}^{1})=e^{\beta_{2}}$
+\end_inset
+
+.
+ The odds can also be constructed from the ratios of joint probabilities.
+ The relationship between this model and the dependence model for dual observer
+ mark-recapture distance sampling (
+\begin_inset CommandInset citation
+LatexCommand citealt
+key "Borchers2006"
+
+\end_inset
+
+) is described in the Appendix.
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Diefenbach1998"
+
+\end_inset
+
+ and 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Rivalan2005"
+
+\end_inset
+
+ specified the joint probabilities in Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:dep_table-logit"
+
+\end_inset
+
+ in a slightly different manner with 
+\begin_inset Formula $\tau_{01}=\tau_{10}=\tau(1-\tau^{\ast})$
+\end_inset
+
+, 
+\begin_inset Formula $\tau_{00}=\tau\tau^{\ast}$
+\end_inset
+
+ and 
+\begin_inset Formula $\tau_{11}=1-2\tau+\tau\tau^{\ast}$
+\end_inset
+
+, where 
+\begin_inset Formula $\tau$
+\end_inset
+
+ is the marginal tag loss probability and 
+\begin_inset Formula $\tau^{\ast}$
+\end_inset
+
+ is the conditional probability of losing a tag given the other tag was
+ absent.
+ Although not stated, their conditional probability of losing a tag given
+ the presence of the other tag would be 
+\begin_inset Formula $\tau(1-\tau^{\ast})/(1-\tau)$
+\end_inset
+
+.
+ In both papers the authors used separate functional forms for 
+\begin_inset Formula $\tau$
+\end_inset
+
+ and 
+\begin_inset Formula $\tau*$
+\end_inset
+
+ and specified the independence model by using the same model for both (
+\begin_inset Formula $\tau=\tau^{*})$
+\end_inset
+
+.
+ Their approach is viable but we believe it is preferable to have a model
+ with a parameter that controls dependence and with independence specified
+ simply as 
+\begin_inset Formula $\beta_{3}=$
+\end_inset
+
+0.
+ Also, use of the logit-link provides a way to model dependence as a function
+ of covariates.
+ 
+\end_layout
+
+\begin_layout Standard
+For doubly-tagged animals, the states for the HMM are 11,10,01,00 and Dead.
+ The first four states describe the double tag status for live animals.
+ The parameters for 
+\begin_inset Formula $\Gamma$
+\end_inset
+
+ (Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:CJS Transition matrix"
+
+\end_inset
+
+) are 
+\begin_inset Formula $\phi$
+\end_inset
+
+ for survival, and for tag loss, the vector 
+\begin_inset Formula $\boldsymbol{\beta}$
+\end_inset
+
+ which is used to compute the values for 
+\begin_inset Formula $\tau_{1}^{0},\tau_{2}^{0}$
+\end_inset
+
+ and 
+\begin_inset Formula $\tau_{11},\tau_{01},\tau_{10},\tau_{00}$
+\end_inset
+
+.
+ We define 
+\begin_inset Formula $t_{i}=1-S_{i}$
+\end_inset
+
+ which are 1 when the 
+\begin_inset Formula $i^{th}$
+\end_inset
+
+ tag is lost and 0 when not lost.
+ With data for each of the four combinations of 
+\begin_inset Formula $t_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $t_{2}$
+\end_inset
+
+ (00,01,10,11), a design matrix 
+\begin_inset Formula $X$
+\end_inset
+
+ can be constructed with a formula using 
+\begin_inset Formula $t_{i}$
+\end_inset
+
+ and to compute 
+\begin_inset Formula $\tau_{11},\tau_{01},\tau_{10},\tau_{00}$
+\end_inset
+
+ and 
+\begin_inset Formula $\tau_{1}^{0},\tau_{2}^{0}$
+\end_inset
+
+ from those joint probabilities.
+ For example, using R formula notation 
+\begin_inset Formula $~t_{1}+t_{2}+t_{1}:t_{2}$
+\end_inset
+
+ produces 
+\begin_inset Formula $X=\left[\begin{array}{ccc}
+0 & 0 & 0\\
+0 & 1 & 0\\
+1 & 0 & 0\\
+1 & 1 & 1
+\end{array}\right]$
+\end_inset
+
+ and 
+\begin_inset Formula $\exp(X\beta)/(1'\exp(X\beta))$
+\end_inset
+
+ produces the joint probabilities shown in Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:dep_table-logit"
+
+\end_inset
+
+ where 
+\begin_inset Formula $1'$
+\end_inset
+
+ is a row vector of ones and 
+\begin_inset Formula $K=1'\exp(X\beta)$
+\end_inset
+
+.
+ The formula
+\begin_inset Formula $~t_{1}+t_{2}$
+\end_inset
+
+ produces a model based on independence with loss rates varying by tag and
+ 
+\begin_inset Formula $~I(t_{1}+t_{2})$
+\end_inset
+
+ is the independence model with equal tag loss rates.
+\end_layout
+
+\begin_layout Standard
+The observed data are specified as ++,+-,-+,-
+\begin_inset space \thinspace{}
+\end_inset
+
+- and 0.
+ The + indicates the tag was present for an animal that was observed alive
+ and a - means the tag was missing.
+ The observation 0 means the animal was not encountered on the occasion
+ which includes those with double tag loss and no permanent mark.
+ Only permanently marked animals can have an observation of --.
+ We assume if an animal was encountered, the correct status was observed
+ for each tag.
+ Thus, no errors or partial observations are allowed.
+ The parameters for 
+\begin_inset Formula $D$
+\end_inset
+
+ are capture probabilities 
+\begin_inset Formula $p$
+\end_inset
+
+ as shown in Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:CJS Observation matrix"
+
+\end_inset
+
+.
+ All of the parameters can be functions of covariates and do not have to
+ be constant as shown.
+\end_layout
+
+\begin_layout Section*
+Black Bear Example
+\end_layout
+
+\begin_layout Subsection*
+Single Tag Loss
+\end_layout
+
+\begin_layout Standard
+Using only the left tag status, we used the black bear data to demonstrate
+ an application of single tag loss models with one-half of the bears permanently
+ marked and we then compared the results to an analysis without any permanent
+ marks.
+ If the left tag was not present and it was not permanently marked, then
+ a 
+\begin_inset Quotes eld
+\end_inset
+
+-
+\begin_inset Quotes erd
+\end_inset
+
+ observation was changed to 
+\begin_inset Quotes eld
+\end_inset
+
+0
+\begin_inset Quotes erd
+\end_inset
+
+.
+ To evaluate effects of age on survival, we binned ages with 2 classes (yearling
+ and ages 2 and older) and 3 classes (yearling, age 2 and ages 3 and older).
+ For capture probability, we used 2 classes (age 2 and ages 3 and older)
+ because initial capture probability is not modeled for CJS models, so there
+ was no yearling capture probability.
+ We considered models for survival with effects of age, sex and their interactio
+n.
+ Capture probability was time-varying and we considered additional sex and
+ age effects.
+ For tag loss, we considered models with constant tag loss and variation
+ due to sex and tag age (time at liberty).
+ We fitted each combination of models and used Akaike Information Criterion
+ (AIC) for model selection.
+\end_layout
+
+\begin_layout Standard
+Although there was no clearly best model (Table 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+ref{modsel_single}
+\end_layout
+
+\end_inset
+
+), models with most support included survival that varied by sex and 2 age
+ classes and their interaction and capture probability with additive efffects
+ of time, age and sex.
+ Models with constant tag loss had the most support (sum of weights = 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+Sexpr{formatC(sum(singletag_results$model.table$Weight[constant_tau]),digits=3)}
+\end_layout
+
+\end_inset
+
+) and models with variation by tag age slightly less support (sum of weights
+ = 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+Sexpr{formatC(sum(singletag_results$model.table$Weight[age_tau]),digits=3)}
+\end_layout
+
+\end_inset
+
+) .
+ There was little support for sex-variation in single tag loss.
+ 
+\end_layout
+
+\begin_layout Standard
+Single tag loss from the constant model was 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+Sexpr{formatC(singletag_results[[48]]$results$reals$tau$estimate,digits=2)}
+\end_layout
+
+\end_inset
+
+ (se = 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+Sexpr{formatC(singletag_results[[48]]$results$reals$tau$se,digits=2)}
+\end_layout
+
+\end_inset
+
+).
+ From the best model with tag loss varying by tag age, tag loss increased
+ with tag age from 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+Sexpr{formatC(singletag_results[[51]]$results$reals$tau$estimate[1],digits=2)}
+\end_layout
+
+\end_inset
+
+ (se = 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+Sexpr{formatC(singletag_results[[51]]$results$reals$tau$se[1],digits=2)}
+\end_layout
+
+\end_inset
+
+) in the initial year to 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+Sexpr{formatC(singletag_results[[51]]$results$reals$tau$estimate[11],digits=3)}
+\end_layout
+
+\end_inset
+
+ (se = 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+Sexpr{formatC(singletag_results[[51]]$results$reals$tau$se[11],digits=4)}
+\end_layout
+
+\end_inset
+
+) for a tag that had been applied 10 years earlier.
+ 
+\end_layout
+
+\begin_layout Standard
+Capture probability (Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:capture-probability-estimates"
+
+\end_inset
+
+) was higher for males than females and was higher for 2-year-old bears
+ than bears aged 3 or more.
+ There was substantial temporal variation in capture probability with highest
+ rate of 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+Sexpr{formatC(max(singlep$estimate,na.rm=TRUE),digits=3)}
+\end_layout
+
+\end_inset
+
+ in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+Sexpr{2002+which.max(singlep$estimate[seq(1,44,4)])}
+\end_layout
+
+\end_inset
+
+ and lowest rate of 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+Sexpr{formatC(min(singlep$estimate,na.rm=TRUE),digits=3)}
+\end_layout
+
+\end_inset
+
+ in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+Sexpr{2002+which.min(singlep$estimate[seq(1,44,4)])}
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Survival for males was lower than females, especially yearling males (Table
+ 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+ref{survival_single}
+\end_layout
+
+\end_inset
+
+).
+ There was more support for a model with sex-age interaction (sum of weights
+ = 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+Sexpr{formatC(sum(singletag_results$model.table$Weight[sexage_phi]),digits=3)}
+\end_layout
+
+\end_inset
+
+) than an additive model (sum of weights = 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+Sexpr{formatC(sum(singletag_results$model.table$Weight[additive_phi]),digits=3)}
+\end_layout
+
+\end_inset
+
+) .
+ The survival estimates were sensitive to the choice of survival model but
+ were insensitive to the choice of the tag loss model when 50% were permanently
+ marked.
+ However, when the data were analyzed without using permanent marks, the
+ estimated survival was reduced by aproximately the magnitude of the single
+ tag loss rate (Table 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+ref{survival_single}
+\end_layout
+
+\end_inset
+
+).
+ 
+\end_layout
+
+\begin_layout Subsection*
+Double Tag Loss
+\end_layout
+
+\begin_layout Standard
+Using both tags, we fitted models with one-half of the bears permanently
+ marked and we then compared the results to an analysis without any permanent
+ marks.
+ If both tags were not present and it was not permanently marked, then a
+ 
+\begin_inset Quotes eld
+\end_inset
+
+-
+\begin_inset space \thinspace{}
+\end_inset
+
+-
+\begin_inset Quotes erd
+\end_inset
+
+ observation was changed to 
+\begin_inset Quotes eld
+\end_inset
+
+0
+\begin_inset Quotes erd
+\end_inset
+
+.
+ We fitted the same sequence of models for survival and capture probability
+ that we did for the single tag loss example.
+ However, because there were 2 tags we expanded the set of models for tag
+ loss to include dependence between tag loss events and considered models
+ in which dependence was a function of sex and tag age.
+ We fitted each combination of models and used Akaike Information Criterion
+ (AIC) for model selection.
+\end_layout
+
+\begin_layout Standard
+For this example as well, there was no clearly best model (Table 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+ref{modsel_double}
+\end_layout
+
+\end_inset
+
+).
+ However, as with the single tag loss analysis, the models with most support
+ included survival that varied by sex and 2 age classes and their interaction
+ and capture probability with additive efffects of time, age and sex.
+ The estimates of survival from the best model using both tags and 50% permanent
+ly marked (Table 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+ref{survival_double}
+\end_layout
+
+\end_inset
+
+) were nearly identical to the estimates from the equivalent best model
+ from the single tag analysis.
+ However, for the analysis with double tags and no permanently marked animals,
+ the reduction in survival estimates was much less than the single tag analysis
+ because the bear had to lose both tags and the loss of both tags was estimated
+ assuming independence.
+ The reduction in survival was due to the dependence which cannot be estimated
+ when there were no permanently marked animals.
+\end_layout
+
+\begin_layout Standard
+The dependence in tag loss events was well supported (Table 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+ref{modsel_double}
+\end_layout
+
+\end_inset
+
+) and there was some evidence that the dependence was a function of tag
+ age.
+ However, there was little to no support for sex differences in tag loss
+ rates or dependence.
+\end_layout
+
+\begin_layout Section*
+Discussion
+\end_layout
+
+\begin_layout Standard
+We developed a hidden Markov model (HMM) that incorporates estimation of
+ tag loss with survival to provide estimates of survival that are not biased
+ by tag loss.
+ Our modelling approach can accomodate covariates that affect tag loss and
+ survival which is not possible with the post-analysis adjustment of survival
+ for tag loss (
+\begin_inset CommandInset citation
+LatexCommand citealt
+key "Arnason1981"
+
+\end_inset
+
+).
+ By using a sample of permanently marked animals, the model can adjust for
+ dependence in tag loss events for animals with two tags.
+ Tag loss events may be dependent either due to individual variation in
+ tag strength or quality or tag application or mechanistic reasons for tag
+ loss (e.g., growth, aggression).
+ If dependence cannot be estimated, survival will be negatively biased.
+ The simulations in the supplemental material show that the bias is a function
+ of the amount of unmodelled dependence.
+ We also showed with simulation that bias in survival can be reduced or
+ eliminated with a sample of permanently marked animals with a minor increase
+ in the standard error as long as a sufficient number of animals have a
+ permanent mark.
+\end_layout
+
+\begin_layout Standard
+Dependence is also a problem for visibility surveys with two observers.
+ One approach called, mark-recapture distance sampling (
+\begin_inset CommandInset citation
+LatexCommand citealt
+key "Borchers2006"
+
+\end_inset
+
+) uses ancillary information from a distance sampling design to accomodate
+ and estimate dependence.
+ Unfortunately there is no equivalent for tag loss models.
+ However, we can envision models that incorporate dependence only from doubly-ta
+gged individuals without a permanently marked sample but such an estimator
+ would be model-dependent without a robust means of evaluating model reliability.
+ For example, California sea lions (
+\shape italic
+Zalophus californinanus
+\shape default
+) have a tag applied to both fore-flippers as pups (
+\begin_inset CommandInset citation
+LatexCommand citealt
+key "Hern'andez-Camacho2008b"
+
+\end_inset
+
+,
+\begin_inset CommandInset citation
+LatexCommand citealt
+key "Melin2011b"
+
+\end_inset
+
+).
+ Initial tag loss may be due to manufacturing or application defects, which
+ may be independent between tags.
+ However, growth of the fore-flipper may put pressure on the tag causing
+ the tag to fail or may cause tissue damage that allows the tag to fall
+ out.
+ Furthermore, tag loss may not be independent because growth is symmetric
+ and if one tag is lost the other is also more likely to be lost.
+ Thus, we could develop a model in which 
+\begin_inset Formula $\beta_{3}=$
+\end_inset
+
+0 initially for a few years but not subsequent years.
+ If 
+\begin_inset Formula $\beta_{i}$
+\end_inset
+
+ are age-invariant or can be expressed as a linear function of age, then
+ the slope and intercept for tag loss could be estimated during the period
+ in which 
+\begin_inset Formula $\beta_{3}=$
+\end_inset
+
+0 and 
+\begin_inset Formula $\beta_{3}$
+\end_inset
+
+ could be estimated for the other ages without a permanently marked sample.
+ However, this approach would be very model-dependent with no means to evaluate
+ model reliability.
+ Inclusion of a permanently marked sample will be more reliable.
+\end_layout
+
+\begin_layout Standard
+We demonstrated the usefulness of the model with an application to black
+ bears.
+ The example illustrated the reduction in survival that can occur due to
+ dependence with two tags and the fairly severe bias if bears had only a
+ single tag and no permanent marks.
+ How much more do we want to discuss here about survival estimates?
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+\begin_inset Newpage clearpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+renewcommand{
+\backslash
+refname}{Literature Cited}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset bibtex
+LatexCommand bibtex
+bibfiles "tagloss"
+options "ecology"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+\begin_inset Float table
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{doublespace}
+\end_layout
+
+\end_inset
+
+
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:CJS Transition matrix-singletag"
+
+\end_inset
+
+Hidden Markov model transition matrix 
+\begin_inset Formula $\Gamma$
+\end_inset
+
+ for a Cormack-Jolly-Seber model with singly-tagged animals and a sample
+ with a permanent mark.
+ The states 
+\begin_inset Formula $C_{t}$
+\end_inset
+
+ are 1 (alive with tag present), 0 (alive with tag missing) and dead.
+ 
+\begin_inset Formula $\phi$
+\end_inset
+
+ is survival and 
+\begin_inset Formula $\tau$
+\end_inset
+
+ is the probability of tag loss.
+ All probabilities are shown as constants but can vary.
+ The rows sum to 1.
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="5" columns="5">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top" width="0pt">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="left" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="1" alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+To state
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Dead
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="3" alignment="left" valignment="top" bottomline="true" rotate="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+from state
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\begin_inset Formula $\phi(1-\tau)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\begin_inset Formula $\phi\tau$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\begin_inset Formula $1-\phi$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\begin_inset Formula $\phi$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\begin_inset Formula $1-\phi$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Dead
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{doublespace}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+\begin_inset Float table
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{doublespace}
+\end_layout
+
+\end_inset
+
+
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:CJS Observation matrix-singletag"
+
+\end_inset
+
+Hidden Markov model observation probability matrix 
+\begin_inset Formula $\boldsymbol{D}$
+\end_inset
+
+ for a Cormack-Jolly-Seber model with singly-tagged animals and a sample
+ with a permanent mark.
+ Capture is independent of the tag status which is known with certainty.
+ The observations 
+\begin_inset Formula $X_{t}$
+\end_inset
+
+ are either + which means the tag was present, - when the tag was missing
+ on a permanently marked animal and 0 for animals that were not encountered
+ which would include a previously tagged animal without a permanent mark
+ that had lost its tag.
+ The indicator variable 
+\size small
+
+\begin_inset Formula $I_{M}$
+\end_inset
+
+
+\size default
+ is 1 for permanently marked animals and 0 otherwise.
+ The columns sum to 1 for this matrix.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="5" columns="5">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top" width="0pt">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="left" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="1" alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+State
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Dead
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="3" alignment="left" valignment="top" bottomline="true" rotate="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Observation
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
++
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\begin_inset Formula $p$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\begin_inset Formula $pI_{M}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\begin_inset Formula $1-p$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\begin_inset Formula $1-pI_{M}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{doublespace}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+\begin_inset Float table
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:dep_table-logit"
+
+\end_inset
+
+Joint (
+\begin_inset Formula $\tau_{s_{1}s_{2}}=Pr(S_{1}=s_{1},\, S_{2}=s_{2}))$
+\end_inset
+
+ and marginal (
+\begin_inset Formula $\tau_{i}=Pr(S_{i}=0)$
+\end_inset
+
+, 
+\begin_inset Formula $1-\tau_{i}=Pr(S_{i}=1))$
+\end_inset
+
+ probabilities for double tag status 
+\series bold
+S
+\series default
+ 
+\begin_inset Formula $=$
+\end_inset
+
+ (
+\begin_inset Formula $S_{\mathrm{1}}$
+\end_inset
+
+, 
+\begin_inset Formula $S_{\mathrm{2}})$
+\end_inset
+
+, where the odds of losing the 
+\begin_inset Formula $i^{th}$
+\end_inset
+
+ tag (
+\begin_inset Formula $S_{i}=$
+\end_inset
+
+0) given the other tag is present (
+\begin_inset Formula $S_{3-i\thinspace}=$
+\end_inset
+
+1) is 
+\begin_inset Formula $e^{\beta_{i}}$
+\end_inset
+
+, odds of losing the 
+\begin_inset Formula $i^{th}$
+\end_inset
+
+ tag (
+\begin_inset Formula $S_{i}=$
+\end_inset
+
+0) given other tag is absent (
+\begin_inset Formula $S_{3-i}=$
+\end_inset
+
+0) is 
+\begin_inset Formula $e^{\beta_{i}+\beta_{3}}$
+\end_inset
+
+, and 
+\begin_inset Formula $K=1+e^{\beta_{1}}+e^{\beta_{2}}+e^{\beta_{1}+\beta_{2}+\beta_{3}}$
+\end_inset
+
+ .
+ The independence model is represented by 
+\begin_inset Formula $\beta_{3}=0$
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Tabular
+<lyxtabular version="3" rows="5" columns="4">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="1" alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\size small
+Tag 2 Status (
+\series default
+
+\begin_inset Formula $S_{2}$
+\end_inset
+
+
+\series bold
+)
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\size small
+Tag 1 Status (
+\series default
+
+\begin_inset Formula $S_{\mathrm{\mathbf{1}}}$
+\end_inset
+
+
+\series bold
+)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+Present (
+\shape default
+
+\begin_inset Formula $S_{2}=$
+\end_inset
+
+
+\shape italic
+1)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+Absent (
+\shape default
+
+\begin_inset Formula $S{}_{2}=$
+\end_inset
+
+
+\shape italic
+0)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+Marginal
+\shape default
+ 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+Present (
+\shape default
+
+\begin_inset Formula $S_{1}=$
+\end_inset
+
+
+\shape italic
+1)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\tau_{11}=1/K$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\tau_{10}=e^{\beta_{2}}/K$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $1-\tau_{1}=(1+e^{\beta_{2}})/K$
+\end_inset
+
+ 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+Absent (
+\shape default
+
+\begin_inset Formula $S{}_{1}=$
+\end_inset
+
+
+\shape italic
+0)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\tau_{01}=e^{\beta_{1}}/K$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\tau_{00}=e^{\beta_{1}+\beta_{2}+\beta_{3}}/K$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\tau_{1}=e^{\beta_{1}}(1+e^{\beta_{2}+\beta_{3}})/K$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+Marginal
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $1-\tau_{2}=(1+e^{\beta_{1}})/K$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\tau_{2}=e^{\beta_{2}}(1+e^{\beta_{1}+\beta_{3}})/K$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float table
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:CJS Transition matrix"
+
+\end_inset
+
+Hidden Markov model transition matrix for a Cormack-Jolly-Seber model with
+ states alive and dead and the various alive states split by the status
+ of the tags (1 being present and 0 being absent).
+ The probability of survival is 
+\begin_inset Formula $\phi$
+\end_inset
+
+.
+ The symbols 
+\begin_inset Formula $\tau_{11},\tau_{10},\tau_{01},\tau_{00}$
+\end_inset
+
+ are the joint probabilities starting with both tags (Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:dep_table-logit"
+
+\end_inset
+
+) and 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula $\tau_{1}^{0}$
+\end_inset
+
+
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+ and 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula $\tau_{2}^{0}$
+\end_inset
+
+
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+ are the conditional probabilities of losing the first and second tags respectiv
+ely, given the other tag is absent.
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Tabular
+<lyxtabular version="3" rows="7" columns="7">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top" width="0pt">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="left" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="1" alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+to state
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+11
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+10
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+01
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+00
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Dead
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="3" alignment="left" valignment="top" bottomline="true" rotate="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+from state
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+11
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\phi\tau_{11}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\phi\tau_{10}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\phi\tau_{01}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\phi\tau_{00}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $(1-\phi)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+10
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\phi(1-\tau_{1}^{0})$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\phi\tau_{1}^{0}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $(1-\phi)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+01
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\phi(1-\tau_{2}^{0})$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\phi\tau_{2}^{0}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $(1-\phi)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+00
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\phi$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $(1-\phi)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Dead
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+\begin_inset Float table
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:CJS Observation matrix"
+
+\end_inset
+
+Hidden Markov model observation matrix for a Cormack-Jolly-Seber model in
+ which capture is independent of the tags and tag status is known with certainty.
+ Alive states are 11,10,01, and 00 which represent the status of the tags.
+ For observations, + means the tag was present when recaptured, - means
+ the tag was missing on an animal that was recaptured and 00 means the animal
+ was not recaptured.
+ The indicator variable 
+\size small
+
+\begin_inset Formula $I_{M}$
+\end_inset
+
+
+\size default
+ is 1 for permanently marked animals and 0 otherwise.
+ For animals without a permanent mark, the observation will always be 00
+ for state 00 and is thus not separable from the dead state.
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Tabular
+<lyxtabular version="3" rows="7" columns="6">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="1" alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+State
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+Observation
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+11
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+10
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+01
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+00
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+Dead
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+++
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $p$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
++-
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $p$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+-+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $p$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+-
+\begin_inset space \thinspace{}
+\end_inset
+
+-
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $I_{M}p$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+00
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $1-p$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $1-p$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $1-p$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $1-I_{M}p$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+1
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newpage clearpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<echo=FALSE,results='asis'>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+print(xtable(singletag_results$model.table[1:20,-c(3,6,7)],caption="Model
+ selection table with top 20 single tag loss models for black bear data
+ with 50 
+\backslash
+
+\backslash
+% permanently marked.
+ " ,label="modsel_single",align=rep("r",5),digits=3),caption.placement="top",late
+x.environments="center",include.rownames=FALSE)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage clearpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<echo=FALSE,results='asis'>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+print(xtable(single_survival,caption="Estimates of survival from best single
+ tag loss model fitted for black bear data with 50 
+\backslash
+
+\backslash
+% permanently marked.
+ " ,label="survival_single",align=rep("r",8),digits=3),caption.placement="top",la
+tex.environments="center",include.rownames=FALSE)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage clearpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{landscape}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<echo=FALSE,results='asis'>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+print(xtable(all.lines,caption="Model selection table with top 20 double
+ tag loss models for black bear data with 50 
+\backslash
+
+\backslash
+% permanently marked.
+ " ,label="modsel_double",align=rep("l",6)),caption.placement="top",latex.environm
+ents="center",size="scriptsize",include.rownames=FALSE)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{landscape}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage clearpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<echo=FALSE,results='asis'>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+print(xtable(double_survival,caption="Estimates of survival from best double
+ tag loss model fitted for black bear data with 50 
+\backslash
+
+\backslash
+% permanently marked.
+ " ,label="survival_double",align=rep("r",8),digits=3),caption.placement="top",la
+tex.environments="center",include.rownames=FALSE)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage clearpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+includegraphics[width=6in,height=4in]
+\end_layout
+
+\begin_layout Plain Layout
+
+ {p_plot.pdf}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\paragraph_spacing double
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:capture-probability-estimates"
+
+\end_inset
+
+Capture probability estimates from single tag loss model for black bear
+ data with 50% permanently marked.
+ Estimates are shown for each sex and ages 2 years and 3 years and older
+ for 2003-2013.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+\noindent
+\begin_inset Newpage clearpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+\noindent
+
+\series bold
+Appendix
+\end_layout
+
+\begin_layout Standard
+The probability structure for tag loss is equivalent to capture-recapture
+ (mark-recapture) for two occasions with a closed population which has been
+ used with two observers to measure detection probability in visual surveys.
+ When detection probability is measured solely with the mark-recapture data,
+ it is necessary to assume independence between the detections by the two
+ observers because those missed by both observers (
+\begin_inset Formula $n_{00})$
+\end_inset
+
+ are obviously not included in the sample (
+\begin_inset CommandInset citation
+LatexCommand citealt
+key "Borchers1996"
+
+\end_inset
+
+).
+ Recently, the independence assumption was weakened (
+\begin_inset CommandInset citation
+LatexCommand citealt
+key "Laake1999"
+
+\end_inset
+
+, 
+\begin_inset CommandInset citation
+LatexCommand citealt
+key "Laake2004"
+
+\end_inset
+
+, 
+\begin_inset CommandInset citation
+LatexCommand citealt
+key "Borchers2006"
+
+\end_inset
+
+) in the combined mark-recapture and distance sampling by including a dependence
+ measure 
+\begin_inset Formula $\delta(x)$
+\end_inset
+
+ which was estimated as the discrepancy between the detection probability
+ at distance 
+\begin_inset Formula $x$
+\end_inset
+
+ measured by the mark-recapture (double observer) data (based on independence)
+ and the distance sampling data.
+ If 
+\begin_inset Formula $\delta(x)=$
+\end_inset
+
+1 then independence at all distances is achieved.
+ Because detection probability at 
+\begin_inset Formula $x=$
+\end_inset
+
+0 cannot be measured from the distance sampling data, the independence assumptio
+n for the mark-recapture data was required for 
+\begin_inset Formula $x=$
+\end_inset
+
+0 (
+\begin_inset Formula $\delta$
+\end_inset
+
+(
+\shape italic
+0
+\shape default
+)
+\begin_inset Formula $=$
+\end_inset
+
+1) but not for the other distances.
+\end_layout
+
+\begin_layout Standard
+The dependence structure we have defined for tag loss can be expressed in
+ terms of the 
+\begin_inset Formula $\delta$
+\end_inset
+
+ dependence of 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Borchers2006"
+
+\end_inset
+
+.
+ Under the independence model, the probability that an animal would retain
+ at least one tag is: 
+\begin_inset Formula 
+\[
+1-\tau_{00}^{\ast}=\frac{1+e^{\beta_{1}}+e^{\beta_{2}}}{1+e^{\beta_{1}}+e^{\beta_{2}}+e^{\beta_{1}+\beta_{2}}}
+\]
+
+\end_inset
+
+ Likewise for the dependence model (Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:dep_table-logit"
+
+\end_inset
+
+): 
+\begin_inset Formula 
+\[
+1-\tau_{00}=\frac{1+e^{\beta_{1}}+e^{\beta_{2}}}{1+e^{\beta_{1}}+e^{\beta_{2}}+e^{\beta_{1}+\beta_{2}+\beta_{3}}}
+\]
+
+\end_inset
+
+ The dependence measure of 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Borchers2006"
+
+\end_inset
+
+ is a ratio that measures the distortion between the joint probabilities
+ from the independence model (Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:dep_table-logit"
+
+\end_inset
+
+ 
+\begin_inset Formula $\beta_{3}=0$
+\end_inset
+
+) and the dependence model (Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:dep_table-logit"
+
+\end_inset
+
+ 
+\begin_inset Formula $\beta_{3}\neq0$
+\end_inset
+
+) which can be expressed as: 
+\begin_inset Formula 
+\[
+\delta=\frac{1-\tau_{00}^{\ast}}{1-\tau_{00}}=\frac{K}{K^{\ast}}=1+\frac{e^{\beta_{1}+\beta_{2}}(e^{\beta_{3}}-1)}{1+e^{\beta_{1}+\beta_{2}}+e^{\beta_{1}}+e^{\beta_{2}}}=1+(e^{\beta_{3}}-1)\tau_{00}^{\ast}
+\]
+
+\end_inset
+
+ The same relationship can be obtained using the conditional and marginal
+ probabilities.
+ Defining 
+\begin_inset Formula $\tau_{i}^{s_{3-i}}$
+\end_inset
+
+to be the conditional probability that the 
+\begin_inset Formula $i^{th}$
+\end_inset
+
+ tag is lost given the other tag status is 
+\begin_inset Formula $s_{3-i}$
+\end_inset
+
+: 
+\begin_inset Formula 
+\[
+\tau_{i}^{s_{3-i}}=Pr\left(S_{i}=0\vert S_{3-i}=s_{3-i}\right)=\frac{e^{\beta_{i}+\alpha(1-s_{3-i})}}{1+e^{\beta_{i}+\alpha(1-s_{3-i})}}\thinspace\thinspace.
+\]
+
+\end_inset
+
+If 
+\begin_inset Formula $q_{i}^{s_{3-i}}=1-\tau_{i}^{s_{3-i}}$
+\end_inset
+
+and 
+\begin_inset Formula $q_{i}=1-\tau_{i}$
+\end_inset
+
+ is the marginal tag retention rate, then 
+\begin_inset Formula $\delta=q_{i}^{1}/q_{i}=\frac{K}{K^{\ast}}\thinspace$
+\end_inset
+
+.
+ Likewise the same ratio for any of the joint probabilities based on independenc
+e and dependence other than for the (0,0) event which is not used in the
+ independence model.
+ The dependence measure can also be expressed in terms of covariance (
+\begin_inset CommandInset citation
+LatexCommand citealt
+key "Borchers1996"
+
+\end_inset
+
+) : 
+\begin_inset Formula 
+\[
+\delta=1+\frac{\mathrm{cov}(S_{1},S_{2})}{q_{1}q_{2}}=1+\frac{\frac{1}{K}-q_{1}q_{2}}{q_{1}q_{2}}=\frac{\frac{1}{K}}{\frac{K^{\ast}}{K^{2}}}=1+(e^{\beta_{3}}-1)\tau_{00}^{\ast}
+\]
+
+\end_inset
+
+In general there will likely be positive dependence in tag loss which means
+ 
+\begin_inset Formula $\beta_{3}$
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+textgreater
+\end_layout
+
+\end_inset
+
+ 0 and 
+\begin_inset Formula $\delta$
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+textgreater
+\end_layout
+
+\end_inset
+
+ 1 but negative dependence (
+\begin_inset Formula $\beta_{3}$
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+textless
+\end_layout
+
+\end_inset
+
+ 0) is possible with a lower bound of 
+\begin_inset Formula $\delta$
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+textgreater
+\end_layout
+
+\end_inset
+
+ 1-
+\begin_inset Formula $\tau_{00}^{\ast}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The joint probabilities can be rewritten in terms of 
+\begin_inset Formula $\delta$
+\end_inset
+
+ as: 
+\begin_inset Formula $\tau_{11}=\delta q_{1}q_{2},\thinspace\thinspace\tau_{10}=q_{1}(1-\delta q_{2})$
+\end_inset
+
+ and 
+\begin_inset Formula $\thinspace\tau_{01}=q_{2}\left(1-\delta q_{1}\right)$
+\end_inset
+
+ or as 
+\begin_inset Formula $\tau_{11}=q_{1}^{1}q_{2}^{1}/\delta,\thinspace\thinspace\tau_{10}=q_{1}^{1}\tau_{2}^{1}/\delta$
+\end_inset
+
+ and 
+\begin_inset Formula $\tau_{01}=q_{2}^{1}\tau_{1}^{1}/\delta$
+\end_inset
+
+.
+ The latter form makes it obvious that once you exclude 
+\begin_inset Formula $n_{00}$
+\end_inset
+
+ and condition on the observed data, the 
+\begin_inset Formula $\delta$
+\end_inset
+
+ will cancel from the rescaled joint probabilities which will only be functions
+ of the 
+\begin_inset Formula $q_{i}^{1}$
+\end_inset
+
+.
+ This is also obvious by examining Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:dep_table-logit"
+
+\end_inset
+
+ and noting that the joint probabilities for the observed set of data (
+\begin_inset Formula $n_{11}n_{10}n_{01})$
+\end_inset
+
+ would only be functions of 
+\begin_inset Formula $\beta_{i}$
+\end_inset
+
+ after conditioning on the exclusion of 
+\begin_inset Formula $n_{00}$
+\end_inset
+
+.
+ The same result was shown by 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Borchers2006"
+
+\end_inset
+
+ for mark-recapture distance sampling (mrds) but in that case 
+\begin_inset Formula $\delta$
+\end_inset
+
+ could be estimated from the observed distances.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+Supplemental Material
+\end_layout
+
+\begin_layout Subsection*
+Tag Loss Model Example
+\end_layout
+
+\begin_layout Standard
+The following is the tagloss example that is in the marked package help
+ file and can be accessed with help(tagloss) or run via example(tagloss).
+ It demonstrates an analysis on some simulated data for 1000 animals over
+ 5 cohorts (200 per cohort) and 50% of them permanently marked.
+ The parameters for the simulation were 
+\begin_inset Formula $\phi$
+\end_inset
+
+ = 0.9, 
+\begin_inset Formula $p$
+\end_inset
+
+ = 0.4, and for dependent double tag loss 
+\begin_inset Formula $\beta_{1}$
+\end_inset
+
+ = -2, 
+\begin_inset Formula $\beta_{2}$
+\end_inset
+
+ = -1, 
+\begin_inset Formula $\beta_{3}$
+\end_inset
+
+ = 3.
+ The following retrieves the data and calls the function process.data to
+ specify the analysis model for the CJS double-tag loss model with groups
+ defined by the factor variable perm which has values 
+\begin_inset Quotes eld
+\end_inset
+
+yes
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+no
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<tidy=FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+data(tagloss)
+\end_layout
+
+\begin_layout Plain Layout
+
+# process data with double-tag CJS model and use perm field 
+\end_layout
+
+\begin_layout Plain Layout
+
+# to create groups; one half are permanently marked
+\end_layout
+
+\begin_layout Plain Layout
+
+dp=process.data(tagloss,model="hmmcjs2tl",groups="perm")
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Next the design data are created for each parameter.
+ These data include all of the covariates including individual static and
+ time-varying covariates and occasion and group-specific covariates.
+ The data contains one or more records for each sampling occasion for each
+ animal.
+ The data are specific to each parameter because both the data values and
+ number of records can vary for the parameters which are named Phi, p and
+ tau for this model.
+ For example, for this model Phi has one record per animal-occasion whereas
+ both p and tau have 4 records per animal-occasion with a record for each
+ of the four possible tag loss states (11, 10, 01, 00) as shown below.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<tidy=FALSE,size='scriptsize'>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+# create default design data
+\end_layout
+
+\begin_layout Plain Layout
+
+ddl=make.design.data(dp)
+\end_layout
+
+\begin_layout Plain Layout
+
+# show list parameter names
+\end_layout
+
+\begin_layout Plain Layout
+
+names(ddl)
+\end_layout
+
+\begin_layout Plain Layout
+
+# For Phi there is a single record per occasion(interval) 
+\end_layout
+
+\begin_layout Plain Layout
+
+# per animal.
+\end_layout
+
+\begin_layout Plain Layout
+
+tail(ddl$Phi)
+\end_layout
+
+\begin_layout Plain Layout
+
+# For p, there are 4 records for each occasion 
+\end_layout
+
+\begin_layout Plain Layout
+
+# for each animal.
+ The records are for the 4 possible 
+\end_layout
+
+\begin_layout Plain Layout
+
+# tag states: 11,10,01,00.
+ 
+\end_layout
+
+\begin_layout Plain Layout
+
+tail(ddl$p)
+\end_layout
+
+\begin_layout Plain Layout
+
+# Likewise for tau there are 4 records for each animal-occasion
+\end_layout
+
+\begin_layout Plain Layout
+
+# for the 4 possible tag loss states (stratum): 11,10,01,00
+\end_layout
+
+\begin_layout Plain Layout
+
+tail(ddl$tau)
+\end_layout
+
+\begin_layout Plain Layout
+
+# The tag1, tag2 fields are created as part of default design 
+\end_layout
+
+\begin_layout Plain Layout
+
+# data for p and tau because they act as dummy variables in 
+\end_layout
+
+\begin_layout Plain Layout
+
+# specifying the formula for the tag loss model.
+ 
+\end_layout
+
+\begin_layout Plain Layout
+
+# tag1 or tag2 = 1- tag state.
+ So when the state for tag 1 
+\end_layout
+
+\begin_layout Plain Layout
+
+# is 0 (tag absent), then the field tag1 has the value 1 
+\end_layout
+
+\begin_layout Plain Layout
+
+# and it has the value 0 when the tag is present.
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\end_layout
+
+\begin_layout Standard
+The design data can be modified including adding, removing, renaming fields
+ (columns) but rows should not be deleted or sorted.
+ One field that can be useful to add has the reserved named 
+\begin_inset Quotes eld
+\end_inset
+
+fix
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Its value can either be specified as a fixed value for the real parameter
+ or NA if the real parameter is to be estimated.
+ The term real parameter refers to the 
+\begin_inset Quotes eld
+\end_inset
+
+natural
+\begin_inset Quotes erd
+\end_inset
+
+ value of the parameter (e.g., 0 
+\begin_inset Formula $<\phi<$
+\end_inset
+
+ 1) in contrast to the 
+\begin_inset Quotes eld
+\end_inset
+
+working
+\begin_inset Quotes erd
+\end_inset
+
+ parameter value (e.g.
+ logit transformation) which is used for unbounded optimization.
+ For example, for survival 
+\begin_inset Formula $0<\phi<1$
+\end_inset
+
+ is the real parameter value and the unbounded working parameters are on
+ the logit scale (-
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula $\infty<$
+\end_inset
+
+
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+ 
+\begin_inset Formula $\ln[\phi/(1-\phi)]$
+\end_inset
+
+ 
+\begin_inset Formula $<\infty$
+\end_inset
+
+) .
+ As shown above, for both p and tau, the column fix is created and certain
+ values are assigned automatically in the design data creation.
+ Because this is a CJS model, p is set to 1 (fix=1) for the first occasion
+ the animal was released.
+ This is not actually necessary because those values are set to 1 in the
+ code but the fix field is needed to set p=0 for animals that are not permanentl
+y marked for stratum 00 where both tags are lost as shown below.
+ The link function for tau is a multinomial logit so the joint probabilities
+ (Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:dep_table-logit"
+
+\end_inset
+
+) sum to 1.
+ This is done using a log-link for each of the 4 parameters, setting fix=1
+ for the stratum 11 (both tags present) and then normalizing (dividing by
+ their sum which is K in Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:dep_table-logit"
+
+\end_inset
+
+) so the probabilities are identifiable and sum to 1 (
+\begin_inset Formula $\tau_{11}+\tau_{10}+\tau_{01}+\tau_{00}=1$
+\end_inset
+
+).
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<thatchunk,tidy=FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+# Animals that are not permanently marked cannot be seen 
+\end_layout
+
+\begin_layout Plain Layout
+
+# in state 00 which is the same as tag1==1 & tag2==1
+\end_layout
+
+\begin_layout Plain Layout
+
+ddl$p$fix[ddl$p$perm=="no"&ddl$p$tag1==1&ddl$p$tag2==1]=0
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+There are 4 basic models that can be fitted for tag loss when a sample of
+ the animals are permanently marked.
+ These are listed below with the R formula that is used:
+\end_layout
+
+\begin_layout Itemize
+Tag loss is independent and the tag loss probability is constant for the
+ tags.
+ The formula is ~I(tag1 + tag2) which creates a dummy variable with values
+ 0 (no tags lost), 1 (one tag lost) and 2 (both tags lost).
+ The intercept is always removed for this parameter so this creates a single
+ parameter 
+\begin_inset Formula $(\beta_{1}=\beta_{2}$
+\end_inset
+
+) and 
+\begin_inset Formula $\beta_{3}$
+\end_inset
+
+ is assumed to be 0 (no dependence).
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<thischunk1,tidy=FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+# First fit a model assuming tag loss does not vary for the 2 tags.
+ 
+\end_layout
+
+\begin_layout Plain Layout
+
+# In that case, the probability is beta for a single loss and 2*beta 
+\end_layout
+
+\begin_layout Plain Layout
+
+# for double loss.
+ We get that model using I(tag1+tag2) which has 
+\end_layout
+
+\begin_layout Plain Layout
+
+# values 0,1,2.
+ Note that for the tau parameter the intercept is 
+\end_layout
+
+\begin_layout Plain Layout
+
+# removed automatically.
+ Also tag loss is independent in this model.
+\end_layout
+
+\begin_layout Plain Layout
+
+mod1=crm(dp,ddl,model.parameters=list(tau=list(formula=~I(tag1+tag2))),
+\end_layout
+
+\begin_layout Plain Layout
+
+        initial=list(Phi=2,p=-.4,tau=c(-2)),hessian=TRUE)
+\end_layout
+
+\begin_layout Plain Layout
+
+mod1
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Tag loss is independent and the tag loss probability differs for the tags.
+ The formula is ~tag1 + tag2 which creates 2 parameters (
+\begin_inset Formula $(\beta_{1},\beta_{2}$
+\end_inset
+
+) one for each dummy variable with values 0 (tag not lost) and 1 (tag lost)
+ and 
+\begin_inset Formula $\beta_{3}$
+\end_inset
+
+ is assumed to be 0 (no dependence)
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<thischunk2,tidy=FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+# now fit a model allowing different loss rates for each tag 
+\end_layout
+
+\begin_layout Plain Layout
+
+# but still independent
+\end_layout
+
+\begin_layout Plain Layout
+
+mod2=crm(dp,ddl,model.parameters=list(tau=list(formula=~tag1+tag2)),
+\end_layout
+
+\begin_layout Plain Layout
+
+        initial=list(Phi=2,p=-.4,tau=c(-2,-1)),hessian=TRUE)
+\end_layout
+
+\begin_layout Plain Layout
+
+mod2
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Tag loss is dependent and the tag loss probability is constant for the tags.
+ The formula is ~I(tag1+tag2) + tag1:tag2 which has 2 parameters (
+\begin_inset Formula $\beta_{1}=\beta_{2}$
+\end_inset
+
+ and 
+\begin_inset Formula $\beta_{3}$
+\end_inset
+
+), the dummy variable listed in #1 above and another for tag1*tag2 which
+ has value 0 unless both tags are lost when it is 1.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<thischunk3,tidy=FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+# now fit a model with dependence but same loss rate for each tag
+\end_layout
+
+\begin_layout Plain Layout
+
+mod3=crm(dp,ddl,
+\end_layout
+
+\begin_layout Plain Layout
+
+        model.parameters=list(tau=list(formula=~I(tag1+tag2)+tag1:tag2)),
+\end_layout
+
+\begin_layout Plain Layout
+
+        initial=list(Phi=2,p=-.4,tau=c(-2,3)),hessian=TRUE)
+\end_layout
+
+\begin_layout Plain Layout
+
+mod3
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Tag loss is dependent and the tag loss probability differs for the tags.
+ The formula is ~tag1 + tag2 + tag1:tag2 which creates 3 parameters 
+\begin_inset Formula $(\beta_{1},\beta_{2},\beta_{3}$
+\end_inset
+
+).
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<thischunk4,tidy=FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+# now fit the model that was used to generate the data with dependence
+\end_layout
+
+\begin_layout Plain Layout
+
+mod4=crm(dp,ddl,
+\end_layout
+
+\begin_layout Plain Layout
+
+        model.parameters=list(tau=list(formula=~tag1+tag2+tag1:tag2)),
+\end_layout
+
+\begin_layout Plain Layout
+
+        initial=list(Phi=2,p=-.4,tau=c(-2,-1,3)),hessian=TRUE)
+\end_layout
+
+\begin_layout Plain Layout
+
+mod4
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+Model 4 is the best model which is no surprise because it was used to generate
+ the data.
+ But even though the tag loss model is incorrect in models 1 and 2 which
+ assume independence, the survival estimate is only slightly less than for
+ model 4.
+ Models 1 and 2 compensate by increasing the indiviudal tag loss rates to
+ explain the observed 00s with the permanently marked animals.
+ Thus, if you have enough marked animals you could end up with little bias
+ in survival even if you have the wrong tag loss model.
+\end_layout
+
+\begin_layout Standard
+Now ignore the permanent marks by changing all of the 
+\begin_inset Quotes eld
+\end_inset
+
+-
+\begin_inset space \thinspace{}
+\end_inset
+
+-
+\begin_inset Quotes erd
+\end_inset
+
+ to 
+\begin_inset Quotes eld
+\end_inset
+
+0
+\begin_inset Quotes erd
+\end_inset
+
+ and fixing 
+\begin_inset Formula $p$
+\end_inset
+
+=0 for all records where both tags are lost because the animal would no
+ longer be observable.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<chunkthere,tidy=FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+# Now treat all as not permanently marked by changing all "--" 
+\end_layout
+
+\begin_layout Plain Layout
+
+# observations to not observed ("0")
+\end_layout
+
+\begin_layout Plain Layout
+
+tagloss$ch=gsub("--","0",tagloss$ch)
+\end_layout
+
+\begin_layout Plain Layout
+
+dp=process.data(tagloss,model="hmmcjs2tl")
+\end_layout
+
+\begin_layout Plain Layout
+
+ddl=make.design.data(dp)
+\end_layout
+
+\begin_layout Plain Layout
+
+ddl$p$fix[ddl$p$tag1==1&ddl$p$tag2==1]=0
+\end_layout
+
+\begin_layout Plain Layout
+
+mod0=crm(dp,ddl,model.parameters=list(tau=list(formula=~tag1+tag2)),
+\end_layout
+
+\begin_layout Plain Layout
+
+        initial=list(Phi=2,p=.3,tau=c(-2,-1)),hessian=TRUE)
+\end_layout
+
+\begin_layout Plain Layout
+
+mod0
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+Without permanent marks, the tag-loss specific rates are estimated correctly
+ but survival is biased low because tag loss was dependent in simulating
+ data but was assumed to be independent in the fitted model.
+ Because there are no 
+\begin_inset Quotes eld
+\end_inset
+
+-
+\begin_inset space \thinspace{}
+\end_inset
+
+-
+\begin_inset Quotes erd
+\end_inset
+
+ observations, the model assumes what are unobserved excess 0's are dead,
+ so the survival estimate will be negatively biased.
+ Note the data are different so AIC is not comparable to the other models.
+\end_layout
+
+\begin_layout Standard
+We compare the estimated proportions in each state at occasions 2 to 6 for
+ the 5 fitted models (Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "figbar"
+
+\end_inset
+
+) to show how they differ.
+ This is accomplished using the transition matrix and the matrix exponentiation
+ operator (%^%) in the expm package.
+ The proportions for mod4 can be treated as the expected values because
+ that model was used to simulate the data.
+ Models 1 and 2 that assumed independence over-estimate single tag loss
+ and slightly underestimate double tag loss and survival.
+ Model 3 produces nearly identical results to model 4 in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "figbar"
+
+\end_inset
+
+ and the discrepancy would only appear if the single tag loss proportions
+ waere split into left and right tags lost.
+ Model 0 with no permanent marks does reasonably well estimating the proportion
+ with a single tag but severely underestimates the proportion with double
+ tag loss and thus underestimates survival.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<tagstatus,tidy=FALSE,results="hide">>=
+\end_layout
+
+\begin_layout Plain Layout
+
+# use expm package for matrix exponentiation operator (%^%)
+\end_layout
+
+\begin_layout Plain Layout
+
+# create function to compute 1 to k-step transition proportions
+\end_layout
+
+\begin_layout Plain Layout
+
+tag_status=function(k,x)
+\end_layout
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+	mat=t(sapply(1:k,function(k,x) (x%^%k)[1,] ,x=x))
+\end_layout
+
+\begin_layout Plain Layout
+
+	colnames(mat)=c("11","10","01","00","Dead")
+\end_layout
+
+\begin_layout Plain Layout
+
+	rownames(mat)=1:k
+\end_layout
+
+\begin_layout Plain Layout
+
+	return(mat)
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+mod1_status=tag_status(4,mod1$results$mat$gamma[1,1,,])
+\end_layout
+
+\begin_layout Plain Layout
+
+mod2_status=tag_status(4,mod2$results$mat$gamma[1,1,,])
+\end_layout
+
+\begin_layout Plain Layout
+
+mod3_status=tag_status(4,mod3$results$mat$gamma[1,1,,])
+\end_layout
+
+\begin_layout Plain Layout
+
+mod4_status=tag_status(4,mod4$results$mat$gamma[1,1,,])
+\end_layout
+
+\begin_layout Plain Layout
+
+mod0_status=tag_status(4,mod0$results$mat$gamma[1,1,,])
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<echo=F,results="hide">>=
+\end_layout
+
+\begin_layout Plain Layout
+
+tags_present=rbind(mod1_status[,1],mod2_status[,1],mod3_status[,1],mod4_status[,
+1],mod0_status[,1])
+\end_layout
+
+\begin_layout Plain Layout
+
+onetag_lost=rbind(mod1_status[,2]+mod1_status[,3],mod2_status[,2]+mod2_status[,3
+],mod3_status[,2]+mod3_status[,3],mod4_status[,2]+mod4_status[,3],mod0_status[,2
+]+mod0_status[,3])
+\end_layout
+
+\begin_layout Plain Layout
+
+bothtags_lost=rbind(mod1_status[,4],mod2_status[,4],mod3_status[,4],mod4_status[
+,4],mod0_status[,4])
+\end_layout
+
+\begin_layout Plain Layout
+
+dead=rbind(mod1_status[,5],mod2_status[,5],mod3_status[,5],mod4_status[,5],mod0_
+status[,5])
+\end_layout
+
+\begin_layout Plain Layout
+
+pdf("tagstatus.pdf")
+\end_layout
+
+\begin_layout Plain Layout
+
+par(mfrow=c(1,4))
+\end_layout
+
+\begin_layout Plain Layout
+
+barplot(tags_present,beside=T,ylim=c(0,1),
+\end_layout
+
+\begin_layout Plain Layout
+
+  main="Both Tags Present",legend.text=c("mod1","mod2","mod3","mod4","mod0"),
+\end_layout
+
+\begin_layout Plain Layout
+
+  args.legend=list(x=20,y=.9))
+\end_layout
+
+\begin_layout Plain Layout
+
+barplot(onetag_lost,beside=T,ylim=c(0,1),main="One Tag Lost")
+\end_layout
+
+\begin_layout Plain Layout
+
+barplot(bothtags_lost,beside=T,ylim=c(0,1),main="Both Tags lost")
+\end_layout
+
+\begin_layout Plain Layout
+
+barplot(dead,beside=T,ylim=c(0,1),main="Dead")
+\end_layout
+
+\begin_layout Plain Layout
+
+dev.off()
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection*
+Simulation
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<set_sim,echo=FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+run_sims=FALSE
+\end_layout
+
+\begin_layout Plain Layout
+
+load("C:
+\backslash
+
+\backslash
+Users
+\backslash
+
+\backslash
+JLaake
+\backslash
+
+\backslash
+git
+\backslash
+
+\backslash
+TagLoss
+\backslash
+
+\backslash
+Paper
+\backslash
+
+\backslash
+Linux Simulation Results
+\backslash
+
+\backslash
+.Rdata") 
+\end_layout
+
+\begin_layout Plain Layout
+
+source("C:
+\backslash
+
+\backslash
+Users
+\backslash
+
+\backslash
+JLaake
+\backslash
+
+\backslash
+git
+\backslash
+
+\backslash
+TagLoss
+\backslash
+
+\backslash
+Paper
+\backslash
+
+\backslash
+simulation1.r")
+\end_layout
+
+\begin_layout Plain Layout
+
+source("C:
+\backslash
+
+\backslash
+Users
+\backslash
+
+\backslash
+JLaake
+\backslash
+
+\backslash
+git
+\backslash
+
+\backslash
+TagLoss
+\backslash
+
+\backslash
+Paper
+\backslash
+
+\backslash
+simulation2.r")
+\end_layout
+
+\begin_layout Plain Layout
+
+source("C:
+\backslash
+
+\backslash
+Users
+\backslash
+
+\backslash
+JLaake
+\backslash
+
+\backslash
+git
+\backslash
+
+\backslash
+TagLoss
+\backslash
+
+\backslash
+Paper
+\backslash
+
+\backslash
+simulation3.r")
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+To test the software and understand the behavior of the parameter estimates,
+ we conducted a limited set of simulations for the following scenarios:
+ 
+\end_layout
+
+\begin_layout Enumerate
+Varying proportions from 2% to 99% of the animals given a permanent mark
+ with 500, 1000, 2500 and 5000 marked animals to show affect, if any, on
+ bias, precision and confidence interval coverage.
+\end_layout
+
+\begin_layout Enumerate
+Varying levels of capture probability from 0.05 to 0.5 and varying proportions
+ from 10% to 90% of the animals given a permanent mark with 1000 marked
+ animals to show affect, if any, on bias, precision and confidence interval
+ coverage.
+\end_layout
+
+\begin_layout Enumerate
+Varying levels of tag loss dependence with 
+\begin_inset Formula $exp(\beta_{3})$
+\end_inset
+
+= 1, 2, 4, and 10 and and varying proportions from 1% to 99% of the animals
+ given a permanent mark with 5000 marked animals to show bias in survival
+ resulting from dependence with assumed independence in the fitted model.
+\end_layout
+
+\begin_layout Standard
+For each scenario, 100 simulations were conducted with 5 equal release cohorts
+ and 6 occasions (5 recapture occasions).
+ Survival was constant at 0.9 and capture probability was also constant and
+ set at 
+\begin_inset Formula $p$
+\end_inset
+
+=0.4 except for scenarios in which 
+\begin_inset Formula $p$
+\end_inset
+
+ differed for the scenario.
+ Also, the tag loss parameters were 
+\begin_inset Formula $\beta_{1}=\beta_{2}$
+\end_inset
+
+= -2 and 
+\begin_inset Formula $\beta_{3}$
+\end_inset
+
+= 1 (
+\begin_inset Formula $exp(\beta_{3})$
+\end_inset
+
+=2.718) except for the scenarios were it varied.
+\end_layout
+
+\begin_layout Standard
+The simulation code which uses the simHMM function in the marked package
+ are provided in the supplemental files simulation1.r, simulation2.r and simulatio
+n3.r for the three sets of simulation tests.
+ The confidence interval for the mean estimated survival of the 100 replicates
+ (Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig1"
+
+\end_inset
+
+, 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig4"
+
+\end_inset
+
+, and 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig7"
+
+\end_inset
+
+) typically included the true value except when the fraction that were permanent
+ly marked was very low (2%), when the capture probability was very low (0.05)
+ or when the independence model was assumed for tag loss.
+ The standard error for survival decreased with increasing proportion of
+ the population marked, increasing number of marked animals, and increasing
+ capture probability as expected (Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig2"
+
+\end_inset
+
+ and 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig5"
+
+\end_inset
+
+).
+ Confidence interval coverage generally matched the nominal 95% and when
+ it missed it was too high except in cases where 
+\begin_inset Formula $p$
+\end_inset
+
+=0.05 and 10-20% were permanently marked when coverage was lower than 95%
+ (Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig3"
+
+\end_inset
+
+ and 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig6"
+
+\end_inset
+
+).
+ One result was not expected but does make sense in hindsight.
+ When the proportion of permanently marked animals is high, the model fitted
+ based on independence in tag loss events will produce survival estimates
+ with little or no bias (Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig7"
+
+\end_inset
+
+) because it is based mostly on the permanent marks.
+ To fit the data under independence, the estimates of single tag loss are
+ higher than the true values to match the observed number of animals with
+ both tags lost which is higher due to the dependence (Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig8"
+
+\end_inset
+
+ and 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig9"
+
+\end_inset
+
+) .
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+includegraphics[width=6in,height=6in]
+\end_layout
+
+\begin_layout Plain Layout
+
+ {tagstatus.pdf}
+\end_layout
+
+\end_inset
+
+
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "figbar"
+
+\end_inset
+
+For each fitted model, the plot of estimated proportions for simulated data
+ that are alive and have both tags present, one tag lost, both tags lost
+ and the proportion that are dead.
+ Models mod1 and mod2 assume independence but have 50% of the animals have
+ a permanent mark so double tag loss is observable; whereas, mod0 assumes
+ no animals have a permanent mark and assumes independence.
+ Model mod4 is the model used to simulate the data with dependent tag loss.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage clearpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+includegraphics[width=6in,height=6in]
+\end_layout
+
+\begin_layout Plain Layout
+
+ {Fig1estimate.pdf}
+\end_layout
+
+\end_inset
+
+
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig1"
+
+\end_inset
+
+Boxplot of survival estimates from 100 simulations with sample sizes 500,
+ 1000, 2500 and 5000 and varying proportions of the animals permanently
+ marked.
+ The simulation mean and its 95% confidence interval are shown as an open
+ circle and dashed line and survival of 0.9 used to simulate the data is
+ shown as a horizontal line.
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage clearpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+includegraphics[width=6in,height=6in]
+\end_layout
+
+\begin_layout Plain Layout
+
+ {Fig2se.pdf}
+\end_layout
+
+\end_inset
+
+
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig2"
+
+\end_inset
+
+Boxplot of standard error estimates of logit of survival from 100 simulations
+ with sample sizes 500, 1000, 2500 and 5000 and varying proportions of the
+ animals permanently marked.
+ The standard deviation of the logit survival estimates is shown as a solid
+ circle.
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage clearpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+includegraphics[width=6in,height=6in]
+\end_layout
+
+\begin_layout Plain Layout
+
+ {Fig3cic.pdf}
+\end_layout
+
+\end_inset
+
+
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig3"
+
+\end_inset
+
+Confidence interval coverage of survival estimates from 100 simulations
+ with sample sizes 500, 1000, 2500 and 5000 and varying proportions of the
+ animals permanently marked.
+ The nominal 95% level is shown as a horizontal line.
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage clearpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+includegraphics[width=6in,height=6in]
+\end_layout
+
+\begin_layout Plain Layout
+
+ {Fig4estimate_byp.pdf}
+\end_layout
+
+\end_inset
+
+
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig4"
+
+\end_inset
+
+Boxplot of survival estimates from 100 simulations with 1000 animals and
+ varying levels of capture probability and proportions of the animals permanentl
+y marked.
+ The simulation mean and its 95% confidence interval are shown as an open
+ circle and dashed line and survival of 0.9 used to simulate the data is
+ shown as a horizontal line.
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage clearpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+includegraphics[width=6in,height=6in]
+\end_layout
+
+\begin_layout Plain Layout
+
+ {Fig5se_byp.pdf}
+\end_layout
+
+\end_inset
+
+
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig5"
+
+\end_inset
+
+Boxplot of standard error estimates of logit of survival from 100 simulations
+ with 1000 animals and varying levels of capture probability and proportions
+ of the animals permanently marked.
+ The standard deviation of the logit survival estimates is shown as a solid
+ circle.
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage clearpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+includegraphics[width=6in,height=6in]
+\end_layout
+
+\begin_layout Plain Layout
+
+ {Fig6cic_byp.pdf}
+\end_layout
+
+\end_inset
+
+
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig6"
+
+\end_inset
+
+Confidence interval coverage of survival estimates from 100 simulations
+ with 1000 animals and varying levels of capture probability and proportions
+ of the animals permanently marked.
+ The nominal 95% level is shown as a horizontal line.
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage clearpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+includegraphics[width=6in,height=6in]
+\end_layout
+
+\begin_layout Plain Layout
+
+ {Fig7estimate_dep1.pdf}
+\end_layout
+
+\end_inset
+
+
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig7"
+
+\end_inset
+
+Boxplot of survival estimates from 100 simulations with 5000 animals and
+ varying proportions of the animals permanently marked and levels of dependence
+ of tag loss.
+ When the log dependence is 0 tag loss events are independent.
+ The top row of plots show results when fitted model assumed dependence
+ and the bottom row shows results when independence was assumed.
+ The simulation mean and its 95% confidence interval are shown as an open
+ circle and dashed line and survival of 0.9 used to simulate the data is
+ shown as a horizontal line.
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage clearpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+includegraphics[width=6in,height=6in]
+\end_layout
+
+\begin_layout Plain Layout
+
+ {Fig8estimate_dep2.pdf}
+\end_layout
+
+\end_inset
+
+
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig8"
+
+\end_inset
+
+Boxplot of tag loss estimate (top row) and tag loss dependence estimate
+ from 100 simulations with 5000 animals and varying proportions of the animals
+ permanently marked and levels of dependence of tag loss.
+ Dependence was assumed in the fitted model.
+ The simulation mean and its 95% confidence interval are shown as an open
+ circle and dashed line and values used to simulate the data are shown as
+ horizontal line(s).
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage clearpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+includegraphics[width=6in,height=6in]
+\end_layout
+
+\begin_layout Plain Layout
+
+ {Fig9estimate_dep3.pdf}
+\end_layout
+
+\end_inset
+
+
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig9"
+
+\end_inset
+
+Boxplot of tag loss estimate when the model assumed dependence (top row)
+ and independence (bottom row) from 100 simulations with 5000 animals and
+ varying proportions of the animals permanently marked and levels of dependence
+ of tag loss.
+ The simulation mean and its 95% confidence interval are shown as an open
+ circle and dashed line and the tag loss value used in the simulation is
+ shown as a horizontal line.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document

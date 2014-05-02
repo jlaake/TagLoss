@@ -4,26 +4,35 @@
 \begin_header
 \textclass article
 \begin_preamble
-% Converted from Microsoft Word to LaTeX
-% by Chikrii Softlab Word2TeX converter (version 5.0)
-% Copyright (C) 1999-2011 Chikrii Softlab. All rights reserved.
-% http://www.chikrii.com
-% mailto: support@chikrii.com
-% License: CSL#004DE0
+
+\usepackage{amsthm}
+\usepackage{epsfig}
+\usepackage{psfrag}
+\usepackage{lineno}
 
 
-\usepackage{latexsym}
+%\setlength{\evensidemargin}{0in} \setlength{\oddsidemargin}{0in}
+%\setlength{\topmargin}{0.0in} \setlength{\textwidth}{6.5in}
+%\setlength{\textheight}{9in} \setlength{\topskip}{0in}
+%\setlength{\headheight}{0in} \setlength{\headsep}{0in}
+\usepackage[labelfont=bf,labelsep=period]{caption}
 \end_preamble
-\use_default_options false
+\use_default_options true
+\begin_modules
+sweave
+\end_modules
 \maintain_unincluded_children false
+\begin_local_layout
+
+\end_local_layout
 \language english
-\language_package default
-\inputencoding auto
-\fontencoding global
-\font_roman default
+\language_package none
+\inputencoding latin9
+\fontencoding default
+\font_roman times
 \font_sans default
 \font_typewriter default
-\font_default_family default
+\font_default_family rmdefault
 \use_non_tex_fonts false
 \font_sc false
 \font_osf false
@@ -35,16 +44,16 @@
 \output_sync 0
 \bibtex_command default
 \index_command default
-\paperfontsize default
-\spacing single
+\paperfontsize 12
+\spacing double
 \use_hyperref false
 \papersize default
-\use_geometry false
-\use_amsmath 1
+\use_geometry true
+\use_amsmath 2
 \use_esint 1
-\use_mhchem 1
-\use_mathdots 1
-\cite_engine basic
+\use_mhchem 0
+\use_mathdots 0
+\cite_engine natbib_authoryear
 \use_bibtopic false
 \use_indices false
 \paperorientation portrait
@@ -71,19 +80,175 @@
 
 \begin_body
 
-\begin_layout Standard
-\align center
+\begin_layout Title
 
 \series bold
-Incorporating Dependence in Tag Loss Estimation
-\series default
+Incorporating Dependence in Tag Loss for Survival Estimation
+\end_layout
+
+\begin_layout Section*
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+setlength{
+\backslash
+textheight}{575pt}
+\end_layout
+
+\end_inset
+
  
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+setlength{
+\backslash
+textheight}{575pt}
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+setlength{
+\backslash
+baselineskip}{24pt}
+\end_layout
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Section*
+
+\size normal
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+linenumbers
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
 
+\size normal
+\begin_inset FormulaMacro
+\newcommand{\baselinestretch}{1.0}
+\end_inset
+
+ 
+\begin_inset FormulaMacro
+\renewcommand{\baselinestretch}{1.0}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+
 \series bold
 Introduction
+\end_layout
+
+\begin_layout Standard
+Chilvers, B.
+ L., and D.
+ MacKenzie.
+ 2010.
+ Age- and sex-specific survival estimates incorporating tag loss for New
+ Zealand sea lions, Phocarctos hookeri.
+ J.
+ Mammal.
+ .
+\end_layout
+
+\begin_layout Standard
+MS model - no modelling of dependence; straight Psi_ts from t to s tags
+ in one time step.
+\end_layout
+
+\begin_layout Standard
+\noindent
+Bradshaw, C.
+ J.
+ A., R.
+ J.
+ Barker, and L.
+ S.
+ Davis.
+ 2000.
+ Modeling tag loss in New Zealand fur seal pups.
+ J.
+ Agric.
+ Biol.
+ Environ.
+ Stat.
+ 5:475–485.
+\end_layout
+
+\begin_layout Standard
+Demonstrated dependence in tag loss; used log-linear model for tag loss
+ to incorporate dependence
+\end_layout
+
+\begin_layout Standard
+\noindent
+Kremers, W.
+ K.
+ 1988.
+ Estimation of Survival Rates from a Mark-Recapture Study with Tag Loss.
+ Biometrics 44:117–130.
+\end_layout
+
+\begin_layout Standard
+Recovery/resight model with permanent mark used with recovery and resight
+ - non-permanent mark
+\end_layout
+
+\begin_layout Standard
+\noindent
+McMahon, C.
+ R., and G.
+ C.
+ White.
+ 2009.
+ Tag loss probabilities are not independent: Assessing and quantifying the
+ assumption of independent tag transition probabilities from direct observation.
+ J.
+ Exp.
+ Mar.
+ Bio.
+ Ecol.
+ 372:36–42.
+\end_layout
+
+\begin_layout Standard
+Used MS models in which each has a permanent mark to demonstrate dependence.
+ Specified independence and dependence model with log link on Psi; use of
+ mlogit required a second parameter for indep model
 \end_layout
 
 \begin_layout Standard
@@ -91,7 +256,7 @@ Developing methods of marking animals that minimize or eliminate mark loss
  are important because mark-recapture estimators assume recaptures of marked
  individuals are always detected (Seber 1982).
  However, current methods of marking many different species indicate that
- problems with mark retention encompass small mammals (Fokidis et al.
+ problems with mark retention occur with small mammals (Fokidis et al.
  2006), large terrestrial mammals (Fosgate et al.
  2006), aquatic mammals (Bradshaw et al.
  2000), fish (Cowen and Schwartz 2006), and reptiles (Rivalan et al.
@@ -124,9 +289,11 @@ Using natural markings to track individual animals can have low error rates
 In recent studies where the opportunity has occurred to observe loss of
  both tags via the use of a third permanent mark, however, the independence
  assumption has been shown to be invalid (Siniff and Ralls, 1991; Diefenbach
- and Alt, 1998; Bradshaw, Barker and Davis, 2000; Rivalan et al., 2005).
+ and Alt, 1998; Bradshaw, Barker and Davis, 2000; Rivalan et al., 2005; McMahon
+ and White 2009).
  These studies undermine the credibility of tag loss evaluations for situations
- in which loss of both marks is not observable (Pistorius et al., 2000).
+ in which loss of both marks is not observable (Pistorius et al.
+ 2000).
  Consequently, it is important to incorporate appropriate models of mark
  loss to reduce bias in estimates of population parameters, even if modeling
  tag loss results in reduced precision (e.g., Pollock et al.
@@ -134,77 +301,871 @@ In recent studies where the opportunity has occurred to observe loss of
 \end_layout
 
 \begin_layout Standard
-Unfortunately, not all species can be marked with a third permanent mark
- to detect the recapture of individuals with both marks missing to assess
- the assumption of independence of each mark loss event.
- This situation has some similarities to mark-recapture distance sampling
- (Laake, 1999; Borchers et al., 2006; Laake, Dawson and Hone, 2008) in which
- objects missed by both observers cannot be included in the sample because
- they are not observed (Borchers, 1999).
- However, appropriate Borchers/Laake citation here used ancillary distance
- data to weaken the independence assumption such that independence was assumed
- only for observations that occurred close to the transect line and improve
- abundance estimates.
- If the independence assumption can be similarly weakened in situations
- where both marks are lost in mark-recaptures studies, it may be possible
- to evaluate loss of marks for species where only double-marked individuals
- are feasible.
-\end_layout
-
-\begin_layout Standard
-We develop a model of mark loss that explicitly models dependence in loss
- of marks and then we consider situations where we can weaken the independence
- assumption by incorporating dependence.
- We apply the model to tagged California sea lions (
-\shape italic
-Zalophus californianus
-\shape default
-) and black bear (
+Not all species can be easily given a permanent individually identifiable
+ mark or doing so can be expensive in comparison to tagging.
+ Thus, it makes sense to consider models which allow a sub-sample of individuals
+ to be permanently marked.
+ A variety of permanent marks including PIT tags(citations), hot brands
+ (citations), or natural marks (citations) could be used depending on the
+ recapture/resight method.
+ We describe a modelling approach for tag loss that uses a sample of animals
+ with a permanent mark to estimate tag loss for single tagging and to incorporat
+e dependence in tag loss for double-tagging.
+ We integrate the tag loss model into a Cormack-Jolly-Seber (CJS) model
+ using hidden Markov models to provide unbiased estimates of survival in
+ the presence of tag loss.
+ We apply the model to black bears (
 \shape italic
 Ursus americanus
 \shape default
-) which were both double tagged and given a separate permanent mark.
- We compare the results using an independence model and dependence model
- with the double tag data excluding the double tag loss observations to
- the results using the data including the known double tag loss.
+) with two ear tags and sample of bears given a separate permanent lip tatoo.
+ 
 \end_layout
 
-\begin_layout Standard
+\begin_layout Section*
 
 \series bold
-Tag Loss Models
+Single-Tag Loss Models
 \end_layout
 
 \begin_layout Standard
-We first consider a simple situation which has been well described in the
+We start with the simpler situation in which each animal is only given a
+ single tag but a subsample is also given a permanent individual mark.
+ We define the indicator variable 
+\begin_inset Formula $I_{M}$
+\end_inset
+
+ to be 1 if the animal has a permanent mark and 0 if not.
+ The animals are released and then recaptured at a set of occasions as in
+ a standard CJS framework.
+ Initially we will assume that recapture of animals does not depend on their
+ tag status (e.g., animals are physically caught and then examined for marks).
+ At each occasion, the released animal can be in any one of 
+\begin_inset Formula $m$
+\end_inset
+
+ = 3 states: 1) state 1 where animal is alive and has retained its tag,
+ 2) state 0 where the animal is alive but has lost its tag, and 3) state
+ Dead where the animal is dead.
+ An encounter history string for each animal is constructed using one of
+ 
+\begin_inset Formula $s$
+\end_inset
+
+ = 3 values: 
+\begin_inset Quotes eld
+\end_inset
+
++
+\begin_inset Quotes erd
+\end_inset
+
+ when an animal is encountered alive with its tag, 
+\begin_inset Quotes eld
+\end_inset
+
+-
+\begin_inset Quotes erd
+\end_inset
+
+ when a permanently marked animal is encountered without its tag, and 0
+ for animals that are not encountered.
+ We define 
+\begin_inset Formula $\phi$
+\end_inset
+
+to be the probability of surviving the interval between occasions, 
+\begin_inset Formula $\tau$
+\end_inset
+
+ the probability of losing the tag during an interval, and 
+\begin_inset Formula $p$
+\end_inset
+
+ to be the probability of encountering a live animal.
+ 
+\end_layout
+
+\begin_layout Standard
+Following notation in Laake (2013), the state at time 
+\begin_inset Formula $t$
+\end_inset
+
+ is 
+\begin_inset Formula $C_{t}$
+\end_inset
+
+ and the observation at time 
+\begin_inset Formula $t$
+\end_inset
+
+ is 
+\begin_inset Formula $X_{t}$
+\end_inset
+
+ and a hidden Markov model can be described with two matrices: 1) 
+\begin_inset Formula $\Gamma$
+\end_inset
+
+, the 
+\begin_inset Formula $m\times m$
+\end_inset
+
+ one-step state transition probability matrix and 2) 
+\begin_inset Formula $\boldsymbol{D}$
+\end_inset
+
+ the 
+\begin_inset Formula $s\times m$
+\end_inset
+
+ state-dependent observation probability matrix.
+ The elements of 
+\begin_inset Formula $\Gamma$
+\end_inset
+
+,
+\begin_inset Formula $\gamma_{ij}$
+\end_inset
+
+, are defined as the probability of transitioning from state 
+\begin_inset Formula $i$
+\end_inset
+
+ to state 
+\begin_inset Formula $j$
+\end_inset
+
+.
+ The rows sum to 1.
+\begin_inset VSpace smallskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="5" columns="5">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top" width="0pt">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="left" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="1" alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+To state
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Dead
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="3" alignment="left" valignment="top" bottomline="true" rotate="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+From state
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\begin_inset Formula $\phi(1-\tau)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\begin_inset Formula $\phi\tau$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\begin_inset Formula $1-\phi$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\begin_inset Formula $\phi$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\begin_inset Formula $1-\phi$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Dead
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+The elements 
+\begin_inset Formula $d_{ij}$
+\end_inset
+
+ of 
+\begin_inset Formula $\boldsymbol{D}$
+\end_inset
+
+ are 
+\begin_inset Formula $Pr(X_{t}=i|C_{t}=j)$
+\end_inset
+
+ and the colums sum to 1.
+ For animals without a permanent mark, the only possible observations are
+ + and 0.
+ RECAPTURE vs RESIGHT - with and without state uncertainty
+\end_layout
+
+\begin_layout Standard
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="5" columns="5">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top" width="0pt">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="left" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="1" alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+State
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Dead
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="3" alignment="left" valignment="top" bottomline="true" rotate="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Observation
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
++
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\begin_inset Formula $p$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\begin_inset Formula $pI_{M}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\begin_inset Formula $1-p$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\begin_inset Formula $1-pI_{M}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+Note difference when observation is a function of the marks - could just
+ be covariates.
+ 
+\end_layout
+
+\begin_layout Section*
+
+\series bold
+Double-Tag Loss Models
+\end_layout
+
+\begin_layout Standard
+We first consider a simple situation that has been well described in the
  literature (Seber 1982) and then we will build from this foundation.
  Two tags are applied to a sample of animals, they are released and at some
- time later a sample of animals are observed having one (n
-\begin_inset Formula $_{\mathrm{1}}=$
+ time later a sample of animals are observed having one (
+\begin_inset Formula $n_{1}=n_{01}+n_{01})$
 \end_inset
 
- n
-\begin_inset Formula $_{\mathrm{01}}+$
+ or two (
+\begin_inset Formula $n_{2}=n_{11}$
 \end_inset
 
- n
-\begin_inset Formula $_{\mathrm{10}})$
-\end_inset
-
- or two (n
-\begin_inset Formula $_{\mathrm{2}}=$
-\end_inset
-
- n
-\begin_inset Formula $_{\mathrm{11}})$
-\end_inset
-
- tags present.
- In this simple example, double tag loss (
-\begin_inset Formula $n_{00})$
-\end_inset
-
- is not observable.
+) tags present.
  Let 
 \series bold
 S
@@ -221,7 +1182,7 @@ S
 \begin_inset Formula $S_{\mathrm{2}})$
 \end_inset
 
- represent the status vector of the 2 tags where 
+ represent the state vector of the 2 tags where 
 \begin_inset Formula $S_{i}$
 \end_inset
 
@@ -253,418 +1214,72 @@ S
 
  (0,0)) are not observable.
  Initially, we assume both tags have the same probability of tag loss, 
-\begin_inset Formula $p$
+\begin_inset Formula $\tau$
 \end_inset
 
 , and we assume independence of tag fates.
 \end_layout
 
 \begin_layout Standard
-Table 1.
- Joint (
-\begin_inset Formula $\pi_{s_{1}s_{2}})$
-\end_inset
-
- and marginal (
-\begin_inset Formula $p$
-\end_inset
-
-, 
-\begin_inset Formula $q)$
-\end_inset
-
- probabilities for double tag status 
-\series bold
-S
-\series default
- 
-\begin_inset Formula $=$
-\end_inset
-
- (
-\begin_inset Formula $S_{\mathrm{1}}$
-\end_inset
-
-, 
-\begin_inset Formula $S_{\mathrm{2}})$
-\end_inset
-
- with an assumed independence structure.
- The 
-\begin_inset Formula $n_{00}$
-\end_inset
-
- cell is shaded gray because it is not observed.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float table
-placement htbp
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
- 
-\end_layout
-
-\begin_layout Plain Layout
-\align center
-\begin_inset Tabular
-<lyxtabular version="3" rows="5" columns="4">
-<features tabularvalignment="middle">
-<column alignment="left" valignment="top" width="0">
-<column alignment="none" valignment="top" width="112pt">
-<column alignment="none" valignment="top" width="130pt">
-<column alignment="none" valignment="top" width="135pt">
-<row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell multicolumn="1" alignment="center" valignment="top" topline="true" rightline="true" usebox="none" special="p{243pt}">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\series bold
-Tag 2 Status (
-\series default
-
-\begin_inset Formula $S_{2}$
-\end_inset
-
-
-\series bold
-)
-\end_layout
-
-\end_inset
-</cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="none" valignment="top" topline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\series bold
-Tag 1 Status (
-\series default
-
-\begin_inset Formula $S_{\mathrm{\mathbf{1}}}$
-\end_inset
-
-
-\series bold
-)
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="none" valignment="top" topline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\shape italic
-Present (
-\shape default
-
-\begin_inset Formula $S_{2}=$
-\end_inset
-
-
-\shape italic
-1)
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="none" valignment="top" topline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\shape italic
-Absent (
-\shape default
-
-\begin_inset Formula $S_{2}=$
-\end_inset
-
-
-\shape italic
-0)
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="none" valignment="top" topline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\shape italic
-Marginal
-\shape default
- 
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\shape italic
-Present (
-\shape default
-
-\begin_inset Formula $S_{1}=$
-\end_inset
-
-
-\shape italic
-1)
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="none" valignment="top" topline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula ${n_{11};\thinspace\pi}_{11}={(1-p)}^{2}$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="none" valignment="top" topline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula ${n_{10};\thinspace\pi}_{10}=(1-p)p$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="none" valignment="top" topline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $q=1-p$
-\end_inset
-
- 
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\shape italic
-Absent (
-\shape default
-
-\begin_inset Formula $S{}_{1}=$
-\end_inset
-
-
-\shape italic
-0)
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="none" valignment="top" topline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula ${n_{01};\thinspace\pi}_{01}=p(1-p)$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="none" valignment="top" topline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $n_{00};\thinspace{\thinspace\pi}_{00}=p^{2}$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="none" valignment="top" topline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $p$
-\end_inset
-
- 
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\shape italic
-Marginal
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="none" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $q=1-p$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="none" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $p$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="none" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $1$
-\end_inset
-
- 
-\end_layout
-
-\end_inset
-</cell>
-</row>
-</lyxtabular>
-
-\end_inset
-
-
-\begin_inset CommandInset label
-LatexCommand label
-name "tab1"
-
-\end_inset
-
- 
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
 Based on the independence assumption, the probability that an animal retains
- both tags is (1-p)
-\begin_inset Formula $^{\mathrm{2}}$
+ both tags is 
+\begin_inset Formula $(1-\tau)^{2}$
 \end_inset
 
-, the probability of retaining only one tag is 2p(1-p) and the probability
- of losing both tags is p
-\begin_inset Formula $^{\mathrm{2}}$
+, the probability of retaining only one tag is 
+\begin_inset Formula $2\tau(1-\tau)$
+\end_inset
+
+ and the probability of losing both tags is 
+\begin_inset Formula $\tau^{2}$
 \end_inset
 
 .
  The data and probability structure can be represented by a 2x2 contingency
  table for the status (present (retained)/absent (lost)) for each tag (Table
- 1).
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:indep_table"
+
+\end_inset
+
+).
  The marginal probabilities of tag loss and tag retention are 
-\begin_inset Formula $p$
+\begin_inset Formula $\tau$
 \end_inset
 
  and 
-\begin_inset Formula $q=$
-\end_inset
-
-1-
-\begin_inset Formula $p$
+\begin_inset Formula $1-\tau$
 \end_inset
 
  and the joint probabilities are represented as 
 \begin_inset Formula $\pi_{11}\pi_{10}\pi_{01}\pi_{00}\thinspace$
 \end_inset
 
-for each of the cells in the table.
+for each of the cells in Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:indep_table"
+
+\end_inset
+
+.
  Due to the assumed independence the conditional probability of tag loss
  or retention of a tag given the status of the other tag is the same as
  the marginal probability.
  For example, the probability that tag 1 is lost given that tag 2 is retained
  is
-\begin_inset Formula ${\thinspace\pi}_{01}/(1-p)=p\thinspace$
+\begin_inset Formula $\pi_{01}/(1-\tau)=\tau$
 \end_inset
 
-
+.
 \end_layout
 
 \begin_layout Standard
+\paragraph_spacing double
 The log-likelihood function (excluding the constant) for 
-\begin_inset Formula $p$
+\begin_inset Formula $\tau$
 \end_inset
 
  given the observed data (
@@ -682,43 +1297,42 @@ The log-likelihood function (excluding the constant) for
  
 \begin_inset Formula 
 \[
-L\left(p\thinspace\vert\thinspace{n_{1},n_{2}}\right)\propto n_{1}\log_{e}[2{p(1-p)}]+n_{2}\log_{e}{[\left(1-p\right)^{2}]}-(n_{1}+n_{2})\thinspace{log}_{e}{[1-p^{2}]}
+L\left(\tau\thinspace\vert\thinspace n_{1},n_{2}\right)\propto n_{1}\log_{e}[2\tau(1-\tau)]+n_{2}\log_{e}[\left(1-\tau\right)^{2}]-(n_{1}+n_{2})\thinspace\textrm{log}_{e}[1-\tau^{2}]
 \]
 
 \end_inset
 
- The maximum likelihood estimator (MLE) for tag loss probability is 
-\begin_inset Formula $\hat{p}=\frac{n_{1}}{n_{1}{+2n}_{2}}$
+The maximum likelihood estimator (MLE) for tag loss probability is 
+\begin_inset Formula $\hat{\tau}=\frac{n_{1}}{n_{1}+2n_{2}}$
 \end_inset
 
 .
  Now if we allow different probabilities for each tag 
-\begin_inset Formula $(p_{1}p_{2})$
+\begin_inset Formula $(\tau_{1},\tau_{2})$
 \end_inset
 
  (e.g., different tag types or tag orientation), then the log-likelihood function
  is: 
+\size small
+
 \begin_inset Formula 
 \[
-L\left({p_{1},p_{2}}\thinspace\vert\thinspace{n_{10},n_{01},n_{11}}\right)\propto n_{10}\log_{e}[(1-p_{1})p_{2}]+n_{01}{\mathrm{log}}_{e}\left[p_{1}\left(1-p_{2}\right)\right]+n_{11}\log_{e}\left[\left(1-p_{1}\right)\left(1-p_{2}\right)\right]-
+L\left(\tau_{1},\tau_{2}\thinspace\vert\thinspace n_{10},n_{01},n_{11}\right)\propto\begin{array}{c}
+n_{10}\log_{e}[(1-\tau_{1})\tau_{2}]+n_{01}\mathrm{log}_{e}\left[\tau_{1}\left(1-\tau_{2}\right)\right]+n_{11}\log_{e}\left[\left(1-\tau_{1}\right)\left(1-\tau_{2}\right)\right]-\\
+(n_{01}+n_{10}+n_{11})\thinspace log_{e}[1-\tau_{1}\tau_{2}]
+\end{array}
 \]
 
 \end_inset
 
- 
-\begin_inset Formula 
-\[
-(n_{01}+n_{10}+n_{11})\thinspace{log}_{e}{[1-p_{1}p_{2}]}
-\]
 
-\end_inset
-
- and the MLEs are 
-\begin_inset Formula $\hat{p}_{1}=\frac{n_{01}}{n_{01}{+n}_{11}}$
+\size default
+and the MLEs are 
+\begin_inset Formula $\hat{\tau}_{1}=\frac{n_{01}}{n_{01}+n_{11}}$
 \end_inset
 
  and 
-\begin_inset Formula $\hat{p}_{2}=\frac{n_{10}}{n_{10}{+n}_{11}}$
+\begin_inset Formula $\hat{\tau}_{2}=\frac{n_{10}}{n_{10}+n_{11}}$
 \end_inset
 
  which are equivalent to the capture probability estimators in a two occasion
@@ -742,19 +1356,22 @@ We can also express the tag loss probabilities using a logit link (Bradshaw
  et al.
  2000) which becomes helpful to incorporate covariates and to express dependence
  in tag fates.
- With the logit link, the natural logarithm (log
-\begin_inset Formula $_{\mathrm{e}})$
+ With the logit link, the log-odds (
+\begin_inset Formula $\log{}_{\mathrm{e}}(\tau/(1-\tau)$
 \end_inset
 
- of the odds (log
-\begin_inset Formula $_{\mathrm{e}}$
-\end_inset
-
-(p/(1-p)) is some linear function of the parameters.
+) is a linear function of the parameters.
  Odds are simply the ratio of the probabilities of the event occurring and
  not occurring.
  Allowing different tag loss probabilities for each tag, we can re-express
- the probabilities in Table 1 such that the odds of losing the 
+ the probabilities in Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:indep_table"
+
+\end_inset
+
+ such that the odds of losing the 
 \begin_inset Formula $i^{th}$
 \end_inset
 
@@ -769,385 +1386,14 @@ We can also express the tag loss probabilities using a logit link (Bradshaw
  (Table 2).
  The model has the same structure and there is a 1-1 relationship between
  
-\begin_inset Formula $\hat{p}_{i}$
+\begin_inset Formula $\tau_{i}$
 \end_inset
 
  and the parameters 
-\begin_inset Formula $\hat{\beta}_{i}=\log_{e}{[\hat{p}_{i}}\mathord{\left/{\vphantom{{[\hat{p}_{i}}{{(1-\hat{p}}_{i})]}}}\right.\kern -\nulldelimiterspace}{{(1-\hat{p}}_{i})]}$
+\begin_inset Formula $\beta_{i}=\log_{e}[\tau_{i}/(1-\tau_{i})]$
 \end_inset
 
-
-\end_layout
-
-\begin_layout Standard
-Table 2.
- Joint (
-\begin_inset Formula $\pi_{s_{1}s_{2}}^{\ast})$
-\end_inset
-
- and marginal (
-\begin_inset Formula $p_{i}^{\ast}q_{i}^{\ast})$
-\end_inset
-
- probabilities for double tag status 
-\series bold
-S
-\series default
- 
-\begin_inset Formula $=$
-\end_inset
-
- (
-\begin_inset Formula $S_{\mathrm{1}}$
-\end_inset
-
-, 
-\begin_inset Formula $S_{\mathrm{2}})$
-\end_inset
-
-, where the odds (
-\begin_inset Formula $p_{i}^{\ast}/q_{i}^{\ast})\thinspace$
-\end_inset
-
-of losing the 
-\begin_inset Formula $i^{th}$
-\end_inset
-
- tag is 
-\begin_inset Formula $e^{\beta_{i}}$
-\end_inset
-
- and 
-\begin_inset Formula $K^{\ast}=1+e^{\beta_{1}}+e^{\beta_{2}}+e^{{\beta_{1}+\beta}_{2}}=(1+e^{\beta_{1}})(1+e^{\beta_{2}})$
-\end_inset
-
- The 
-\begin_inset Formula $n_{00}$
-\end_inset
-
- cell is shaded gray because it is not observed.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float table
-placement htbp
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
- 
-\end_layout
-
-\begin_layout Plain Layout
-\align center
-\begin_inset Tabular
-<lyxtabular version="3" rows="5" columns="4">
-<features tabularvalignment="middle">
-<column alignment="left" valignment="top" width="0">
-<column alignment="none" valignment="top" width="103pt">
-<column alignment="none" valignment="top" width="103pt">
-<column alignment="none" valignment="top" width="171pt">
-<row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell multicolumn="1" alignment="none" valignment="top" topline="true" rightline="true" usebox="none" special="p{207pt}">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\series bold
-Tag 2 Status (S
-\series default
-
-\begin_inset Formula $_{\mathrm{\mathbf{2}}}$
-\end_inset
-
-
-\series bold
-)
-\end_layout
-
-\end_inset
-</cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="none" valignment="top" topline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\series bold
-Tag 1 Status (S
-\series default
-
-\begin_inset Formula $_{\mathrm{\mathbf{1}}}$
-\end_inset
-
-
-\series bold
-)
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="none" valignment="top" topline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\shape italic
-Present (S
-\shape default
-
-\begin_inset Formula $_{2}=$
-\end_inset
-
-
-\shape italic
-1)
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="none" valignment="top" topline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\shape italic
-Absent (S
-\shape default
-
-\begin_inset Formula $_{2}=$
-\end_inset
-
-
-\shape italic
-0)
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="none" valignment="top" topline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\shape italic
-Marginal
-\shape default
- 
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\shape italic
-Present (S
-\shape default
-
-\begin_inset Formula $_{1}=$
-\end_inset
-
-
-\shape italic
-1)
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="none" valignment="top" topline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $\pi_{11}^{\ast}=1/K^{\ast}$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="none" valignment="top" topline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $\pi_{10}^{\ast}=e^{\beta_{2}}/K^{\ast}$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="none" valignment="top" topline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $q_{1}^{\ast}=\frac{1+e^{\beta_{2}}}{K^{\ast}}=\frac{1}{1+e^{\beta_{1}}}$
-\end_inset
-
- 
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\shape italic
-Absent (S
-\shape default
-
-\begin_inset Formula $_{1}=$
-\end_inset
-
-
-\shape italic
-0)
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="none" valignment="top" topline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $\pi_{01}^{\ast}=e^{\beta_{1}}/K^{\ast}$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="none" valignment="top" topline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula ${\pi_{00}^{\ast}=e}^{\beta_{1}+\beta_{2}}/K^{\ast}$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="none" valignment="top" topline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $p_{1}^{\ast}=\frac{e^{\beta_{1}}\left(1+e^{\beta_{2}}\right)}{K^{\ast}}=\frac{e^{\beta_{1}}}{1+e^{\beta_{1}}}$
-\end_inset
-
- 
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\shape italic
-Marginal
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="none" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $q_{2}^{\ast}=1/(1+e^{\beta_{2}})$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="none" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula ${{p_{2}^{\ast}=e}^{\beta_{2}}/(1+e}^{\beta_{2}})$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="none" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $1$
-\end_inset
-
- 
-\end_layout
-
-\end_inset
-</cell>
-</row>
-</lyxtabular>
-
-\end_inset
-
-
-\begin_inset CommandInset label
-LatexCommand label
-name "tab2"
-
-\end_inset
-
- 
-\end_layout
-
-\end_inset
-
-
+.
 \end_layout
 
 \begin_layout Standard
@@ -1197,7 +1443,7 @@ Now we expand the set of observed data to include those animals that lost
 
  determines the amount of dependence.
  These dependent odds are ratios of the joint probabilities (e.g., 
-\begin_inset Formula ${\pi_{01\thinspace}/\pi_{11\thinspace}\thinspace and\thinspace\pi}_{00}/\pi_{10})$
+\begin_inset Formula $\pi_{01\thinspace}/\pi_{11\thinspace}\thinspace\textrm{and}\thinspace\pi_{00}/\pi_{10})$
 \end_inset
 
  and not the marginal probabilities.
@@ -1206,17 +1452,1078 @@ Now we expand the set of observed data to include those animals that lost
 \end_layout
 
 \begin_layout Standard
-Table 3.
- Joint (
+We define 
+\begin_inset Formula $\tau_{i}^{s_{3-i}}$
+\end_inset
+
+to be the conditional probability that the 
+\begin_inset Formula $i^{th}$
+\end_inset
+
+ tag is lost given the other tag status is 
+\begin_inset Formula $s_{3-i}$
+\end_inset
+
+: 
+\begin_inset Formula 
+\[
+\tau_{i}^{s_{3-i}}=Pr\left(S_{i}=0\vert S_{3-i}=s_{3-i}\right)=\frac{e^{\beta_{i}+\alpha(1-s_{3-i})}}{1+e^{\beta_{i}+\alpha(1-s_{3-i})}}\thinspace\thinspace.
+\]
+
+\end_inset
+
+ Thus, 
+\begin_inset Formula $\tau_{i}^{0}=Pr\left(S_{i}=0\vert S_{3-i}=0\right)=\frac{e^{\beta_{i}+\alpha}}{1+e^{\beta_{i}+\alpha}}$
+\end_inset
+
+ whereas, 
+\begin_inset Formula $\tau_{i}^{1}=Pr\left(S_{i}=0\vert S_{3-i}=1\right)=\frac{e^{\beta_{i}}}{1+e^{\beta_{i}}}$
+\end_inset
+
+.
+ The conditional probability of tag retention is 
+\begin_inset Formula $q_{i}^{0}=1-\tau_{i}^{0}$
+\end_inset
+
+ and
+\begin_inset Formula $\thinspace q_{i}^{1}=1-\tau_{i}^{1}$
+\end_inset
+
+ Each joint probability can be specified by the product of a marginal and
+ a conditional probability: 
+\begin_inset Formula $\pi_{11}=q_{1}^{1}q_{2}=q_{2}^{1}q_{1},\thinspace\thinspace\pi_{10}=q_{1}(1-q_{2}^{1})$
+\end_inset
+
+ and 
+\begin_inset Formula $\thinspace\pi_{01}=q_{2}(1-q_{1}^{1}).$
+\end_inset
+
+ The relationship between this model and dual observer mark-recapture distance
+ sampling is described in the Appendix.
+\end_layout
+
+\begin_layout Standard
+Diefenbach et al (1998) and Rivalan et al.
+ (2005) specified the joint probabilities in Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:dep_table-logit"
+
+\end_inset
+
+ in a slightly different manner with 
+\begin_inset Formula $\pi_{01}=\pi_{10}=\tau(1-\tau^{\ast})$
+\end_inset
+
+, 
+\begin_inset Formula $\pi_{00}=\tau\tau^{\ast}$
+\end_inset
+
+ and 
+\begin_inset Formula $\pi_{11}=1-2\tau+\tau\tau^{\ast}$
+\end_inset
+
+, where 
+\begin_inset Formula $\tau$
+\end_inset
+
+ is the marginal tag loss probability and 
+\begin_inset Formula $\tau^{\ast}$
+\end_inset
+
+ is the conditional probability of losing a tag given the other tag was
+ absent.
+ Although not stated, their conditional probability of losing a tag given
+ the presence of the other tag would be 
+\begin_inset Formula $\tau(1-\tau^{\ast})/(1-\tau)$
+\end_inset
+
+.
+ In both papers the authors used separate functional forms for 
+\begin_inset Formula $\tau$
+\end_inset
+
+ and 
+\begin_inset Formula $\tau*$
+\end_inset
+
+ and specified the independence model by using the same model for both (
+\begin_inset Formula $\tau=\tau^{*})$
+\end_inset
+
+.
+ Their approach is viable but we believe it is preferable to have a model
+ with a parameter that controls dependence and with independence specified
+ simply as 
+\begin_inset Formula $\alpha=$
+\end_inset
+
+0.
+ As we show later this enables flexibility in modeling and incorporating
+ dependence.
+ Our model was motivated by Bradshaw et al.
+ (2000) which used logistic regression and specified dependence in tag loss
+ via interactions and measured effects in terms of odds multipliers.
+ We note that they also provide a closed form estimator for the model in
+ Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:dep_table-logit"
+
+\end_inset
+
+ with no covariates and 
+\begin_inset Formula $\alpha=$
+\end_inset
+
+0.
+\end_layout
+
+\begin_layout Standard
+The most obvious and best way to incorporate dependence in tag loss is to
+ mark a subset of the animals with a permanent mark such that for a subset
+ of the data 
+\begin_inset Formula $n_{00}$
+\end_inset
+
+ is observable.
+ For example, all captured black bears in Pennsylvania were given 2 ear
+ tags but some of the bears were also given a permanent unique lip tattoo
+ (Diefenbach et al.
+ 1998) which could be used to identify bears that had lost both ear tags.
+ The likelihood for the tagged only (
+\begin_inset Formula $n_{11}n_{10}n_{01})$
+\end_inset
+
+ would be: 
+\begin_inset Formula 
+\[
+L\left(\beta_{1},\beta_{2}\thinspace\vert\thinspace n_{10},n_{01},n_{11}\right)\propto\prod\limits _{\omega=11,01,10}\left(\frac{\pi_{\omega}}{1-\pi_{00}}\right)^{n_{\omega}}
+\]
+
+\end_inset
+
+ and for the tagged and permanently marked: (
+\begin_inset Formula $n_{11}^{m}n_{01}^{m}n_{10}^{m}n_{00}^{m})$
+\end_inset
+
+: 
+\begin_inset Formula 
+\[
+L\left(\beta_{1},\beta_{2},\alpha\thinspace\vert\thinspace n_{11}^{m},n_{10}^{m},n_{01}^{m},n_{00}^{m}\right)\propto\prod\limits _{\omega=11,01,10,00}\pi_{\omega}^{n_{\omega}^{m}}
+\]
+
+\end_inset
+
+ The combined likelihood for the data could improve on the precision of
+ the tag loss estimates while adjusting for dependence measured from the
+ permanently marked bears.
+ In the absence of data on permanently marked animals, a Bayesian alternative
+ could be used in which a data-derived prior distribution for 
+\begin_inset Formula $\alpha$
+\end_inset
+
+ or 
+\begin_inset Formula $\delta$
+\end_inset
+
+ could be used with the likelihood for the tagged only bears.
+ 
+\end_layout
+
+\begin_layout Section*
+Cormack-Jolly-Seber Model with Tag Loss 
+\end_layout
+
+\begin_layout Standard
+Pradel (2005) proposed using hidden Markov models (HMM) for capture-recapture
+ data.
+ His work was followed by similar applications by Ford et al.
+ (2012), Kendall et al.
+ (2012), and Langrock and King (2013).
+ We follow the HMM model specification described by Laake (2013) and implemented
+ in the R package marked (Laake et al.
+ 2013).
+ The model is specified by two matrices in terms of the parameters: 1) the
+ transition matrix 
+\begin_inset Formula $\Gamma$
+\end_inset
+
+ and 2) state-dependent observation probability matrix, 
+\begin_inset Formula $D$
+\end_inset
+
+.
+ The states are 11,10,01,00 and Dead.
+ The first four states describe the double tag status for live animals.
+ The parameters for 
+\begin_inset Formula $\Gamma$
+\end_inset
+
+ (Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:CJS Transition matrix"
+
+\end_inset
+
+) are 
+\begin_inset Formula $\phi$
+\end_inset
+
+ for survival and 
+\begin_inset Formula $\alpha$
+\end_inset
+
+ for dependence and vector 
+\begin_inset Formula $\boldsymbol{\beta}$
+\end_inset
+
+ which describe tag loss and are used to compute the values for 
+\begin_inset Formula $\tau_{1}^{0},\tau_{2}^{0}$
+\end_inset
+
+ and 
+\begin_inset Formula $\pi_{11},\pi_{01},\pi_{10},\pi_{00}$
+\end_inset
+
+.
+ The observations are specified as ++,+-,-+,-- and 00.
+ The + indicates the tag was present for an animal that was observed alive
+ and a - means the tag was missing.
+ The observation 00 means the animal was not seen on the occasion.
+ We assume if an animal was seen, the correct status was observed for each
+ tag.
+ Thus, no errors or partial observations are allowed.
+ The parameters for D are capture probabilities 
+\begin_inset Formula $p$
+\end_inset
+
+ which are shown in Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:CJS Observation matrix"
+
+\end_inset
+
+ for a model that assumes detection (capture) probability was based on the
+ number of tags.
+ Let 
+\begin_inset Formula $p_{1}$
+\end_inset
+
+ be the probability of seeing an animal with one tag, 
+\begin_inset Formula $p_{2}$
+\end_inset
+
+ be the probability of seeing an animal with two tags, and 
+\begin_inset Formula $p_{0}$
+\end_inset
+
+ be the probability of seeing an animal with a permanent mark but no tags.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:indep_table"
+
+\end_inset
+
+Joint (
+\begin_inset Formula $\pi_{s_{1}s_{2}})$
+\end_inset
+
+ and marginal probabilities for double tag status 
+\series bold
+S
+\series default
+ 
+\begin_inset Formula $=$
+\end_inset
+
+ (
+\begin_inset Formula $S_{\mathrm{1}}$
+\end_inset
+
+, 
+\begin_inset Formula $S_{\mathrm{2}})$
+\end_inset
+
+ under independence structure.
+ The 
+\begin_inset Formula $n_{00}$
+\end_inset
+
+ cell is not observed.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="5" columns="4">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top" width="3cm">
+<column alignment="left" valignment="top" width="3cm">
+<column alignment="left" valignment="top" width="3cm">
+<column alignment="left" valignment="top" width="2cm">
+<row>
+<cell alignment="left" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="1" alignment="center" valignment="top" topline="true" bottomline="true" usebox="none" special="p{243pt}">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\size small
+Tag 2 Status (
+\series default
+
+\begin_inset Formula $S_{2}$
+\end_inset
+
+
+\series bold
+)
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\size small
+Tag 1 Status (
+\series default
+
+\begin_inset Formula $S_{\mathrm{\mathbf{1}}}$
+\end_inset
+
+
+\series bold
+)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+\size small
+Present (
+\shape default
+
+\begin_inset Formula $S_{2}=$
+\end_inset
+
+
+\shape italic
+1)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+\size small
+Absent (
+\shape default
+
+\begin_inset Formula $S_{2}=$
+\end_inset
+
+
+\shape italic
+0)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+\size small
+Marginal
+\shape default
+ 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+\size small
+Present (
+\shape default
+
+\begin_inset Formula $S_{1}=$
+\end_inset
+
+
+\shape italic
+1)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $n_{11};\thinspace\pi_{11}=(1-\tau)^{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $n_{10};\thinspace\pi_{10}=(1-\tau)\tau$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $1-\tau$
+\end_inset
+
+ 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+\size small
+Absent (
+\shape default
+
+\begin_inset Formula $S{}_{1}=$
+\end_inset
+
+
+\shape italic
+0)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $n_{01};\thinspace\pi_{01}=\tau(1-\tau)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $n_{00};\thinspace\thinspace\pi_{00}=\tau^{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $\tau$
+\end_inset
+
+ 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+\size small
+Marginal
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $1-\tau$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $\tau$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:indep_table-logit"
+
+\end_inset
+
+Joint (
+\begin_inset Formula $\pi_{s_{1}s_{2}}^{\ast})$
+\end_inset
+
+ and marginal (
+\begin_inset Formula $\tau_{i}^{\ast},\,1-\tau_{i}^{\ast})$
+\end_inset
+
+ probabilities for double tag status 
+\series bold
+S
+\series default
+ 
+\begin_inset Formula $=$
+\end_inset
+
+ (
+\begin_inset Formula $S_{\mathrm{1}}$
+\end_inset
+
+, 
+\begin_inset Formula $S_{\mathrm{2}})$
+\end_inset
+
+, where the odds (
+\begin_inset Formula $\tau_{i}^{\ast}/(1-\tau_{i}^{\ast}))\thinspace$
+\end_inset
+
+of losing the 
+\begin_inset Formula $i^{th}$
+\end_inset
+
+ tag is 
+\begin_inset Formula $e^{\beta_{i}}$
+\end_inset
+
+ and 
+\begin_inset Formula $K^{\ast}=1+e^{\beta_{1}}+e^{\beta_{2}}+e^{{\beta_{1}+\beta}_{2}}=(1+e^{\beta_{1}})(1+e^{\beta_{2}})$
+\end_inset
+
+.
+ The 
+\begin_inset Formula $n_{00}$
+\end_inset
+
+ cell is not observed.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="5" columns="4">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top" width="0">
+<column alignment="none" valignment="top" width="103pt">
+<column alignment="none" valignment="top" width="103pt">
+<column alignment="none" valignment="top" width="171pt">
+<row>
+<cell alignment="left" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="1" alignment="center" valignment="top" topline="true" bottomline="true" usebox="none" special="p{207pt}">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\size small
+Tag 2 Status (
+\series default
+
+\begin_inset Formula $S_{2}$
+\end_inset
+
+
+\series bold
+)
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\size small
+Tag 1 Status (
+\series default
+
+\begin_inset Formula $S_{\mathrm{\mathbf{1}}}$
+\end_inset
+
+
+\series bold
+)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+\size small
+Present (S
+\shape default
+
+\begin_inset Formula $_{2}=$
+\end_inset
+
+
+\shape italic
+1)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+\size small
+Absent (S
+\shape default
+
+\begin_inset Formula $_{2}=$
+\end_inset
+
+
+\shape italic
+0)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+\size small
+Marginal
+\shape default
+ 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+\size small
+Present (S
+\shape default
+
+\begin_inset Formula $_{1}=$
+\end_inset
+
+
+\shape italic
+1)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $\pi_{11}^{\ast}=1/K^{\ast}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $\pi_{10}^{\ast}=e^{\beta_{2}}/K^{\ast}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $1-\tau_{1}^{\ast}=\frac{1+e^{\beta_{2}}}{K^{\ast}}=\frac{1}{1+e^{\beta_{1}}}$
+\end_inset
+
+ 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+\size small
+Absent (S
+\shape default
+
+\begin_inset Formula $_{1}=$
+\end_inset
+
+
+\shape italic
+0)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $\pi_{01}^{\ast}=e^{\beta_{1}}/K^{\ast}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $\pi_{00}^{\ast}=e^{\beta_{1}+\beta_{2}}/K^{\ast}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $\tau_{1}^{\ast}=\frac{e^{\beta_{1}}\left(1+e^{\beta_{2}}\right)}{K^{\ast}}=\frac{e^{\beta_{1}}}{1+e^{\beta_{1}}}$
+\end_inset
+
+ 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+\size small
+Marginal
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $1-\tau_{2}^{\ast}=1/(1+e^{\beta_{2}})$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $\tau_{2}^{\ast}=e^{\beta_{2}}/(1+e^{\beta_{2}})$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="none" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:dep_table-logit"
+
+\end_inset
+
+Joint (
 \begin_inset Formula $\pi_{s_{1}s_{2}})$
 \end_inset
 
  and marginal (
-\begin_inset Formula $p_{i}$
+\begin_inset Formula $\tau_{i}$
 \end_inset
 
 , 
-\begin_inset Formula $q_{i})$
+\begin_inset Formula $1-\tau_{i})$
 \end_inset
 
  probabilities for double tag status 
@@ -1268,7 +2575,7 @@ S
 \end_inset
 
 , and 
-\begin_inset Formula $K=1+e^{\beta_{1}}+e^{\beta_{2}}+e^{{\beta_{1}+\beta}_{2}+\alpha}$
+\begin_inset Formula $K=1+e^{\beta_{1}}+e^{\beta_{2}}+e^{\beta_{1}+\beta_{2}+\alpha}$
 \end_inset
 
  The 
@@ -1278,28 +2585,21 @@ S
  cell is observed in this model.
 \end_layout
 
-\begin_layout Standard
-\begin_inset Float table
-placement htbp
-wide false
-sideways false
-status open
+\end_inset
 
-\begin_layout Plain Layout
- 
+
 \end_layout
 
 \begin_layout Plain Layout
-\align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="5" columns="4">
-<features tabularvalignment="middle" tabularwidth="11cm">
-<column alignment="left" valignment="top" width="2cm">
-<column alignment="left" valignment="top" width="3cm">
-<column alignment="left" valignment="top" width="70pt">
-<column alignment="left" valignment="top" width="3cm">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
 <row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1308,16 +2608,17 @@ status open
 
 \end_inset
 </cell>
-<cell multicolumn="1" alignment="none" valignment="top" topline="true" rightline="true" usebox="none" special="p{243pt}">
+<cell multicolumn="1" alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 
 \series bold
-Tag 2 Status (S
+\size small
+Tag 2 Status (
 \series default
 
-\begin_inset Formula $_{\mathrm{\mathbf{2}}}$
+\begin_inset Formula $S_{2}$
 \end_inset
 
 
@@ -1327,7 +2628,7 @@ Tag 2 Status (S
 
 \end_inset
 </cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" usebox="none">
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1336,7 +2637,7 @@ Tag 2 Status (S
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1347,16 +2648,17 @@ Tag 2 Status (S
 </cell>
 </row>
 <row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 
 \series bold
-Tag 1 Status (S
+\size small
+Tag 1 Status (
 \series default
 
-\begin_inset Formula $_{\mathrm{\mathbf{1}}}$
+\begin_inset Formula $S_{\mathrm{\mathbf{1}}}$
 \end_inset
 
 
@@ -1366,16 +2668,16 @@ Tag 1 Status (S
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 
 \shape italic
-Present (S
+Present (
 \shape default
 
-\begin_inset Formula $_{2}=$
+\begin_inset Formula $S_{2}=$
 \end_inset
 
 
@@ -1385,16 +2687,16 @@ Present (S
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 
 \shape italic
-Absent (S
+Absent (
 \shape default
 
-\begin_inset Formula $_{2}=$
+\begin_inset Formula $S{}_{2}=$
 \end_inset
 
 
@@ -1404,7 +2706,7 @@ Absent (S
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1419,16 +2721,16 @@ Marginal
 </cell>
 </row>
 <row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 
 \shape italic
-Present (S
+Present (
 \shape default
 
-\begin_inset Formula $_{1}=$
+\begin_inset Formula $S_{1}=$
 \end_inset
 
 
@@ -1438,7 +2740,7 @@ Present (S
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1450,7 +2752,7 @@ Present (S
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1462,11 +2764,11 @@ Present (S
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $q_{1}=(1+e^{\beta_{2}})/K$
+\begin_inset Formula $1-\tau_{1}=(1+e^{\beta_{2}})/K$
 \end_inset
 
  
@@ -1476,16 +2778,16 @@ Present (S
 </cell>
 </row>
 <row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 
 \shape italic
-Absent (S
+Absent (
 \shape default
 
-\begin_inset Formula $_{1}=$
+\begin_inset Formula $S{}_{1}=$
 \end_inset
 
 
@@ -1495,7 +2797,7 @@ Absent (S
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1507,11 +2809,11 @@ Absent (S
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula ${\pi_{00}=e}^{\beta_{1}+\beta_{2}+\alpha}/K$
+\begin_inset Formula $\pi_{00}=e^{\beta_{1}+\beta_{2}+\alpha}/K$
 \end_inset
 
 
@@ -1519,21 +2821,21 @@ Absent (S
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula ${{p_{1}=e}^{\beta_{1}}(1+e}^{\beta_{2}+\alpha})/K$
+\begin_inset Formula $\tau_{1}=e^{\beta_{1}}(1+e^{\beta_{2}+\alpha})/K$
 \end_inset
 
- 
+
 \end_layout
 
 \end_inset
 </cell>
 </row>
 <row>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1544,11 +2846,11 @@ Marginal
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $q_{2}=(1+e^{\beta_{1}})/K$
+\begin_inset Formula $\tau_{2}=(1+e^{\beta_{1}})/K$
 \end_inset
 
 
@@ -1556,11 +2858,11 @@ Marginal
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula ${{p_{2}=e}^{\beta_{2}}(1+e}^{\beta_{1}+\alpha})/K$
+\begin_inset Formula $\tau_{2}=e^{\beta_{2}}(1+e^{\beta_{1}+\alpha})/K$
 \end_inset
 
 
@@ -1568,14 +2870,11 @@ Marginal
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $1$
-\end_inset
 
- 
 \end_layout
 
 \end_inset
@@ -1586,12 +2885,38 @@ Marginal
 \end_inset
 
 
-\begin_inset CommandInset label
-LatexCommand label
-name "tab3"
+\end_layout
 
 \end_inset
 
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:CJS Transition matrix"
+
+\end_inset
+
+Hidden Markov model transition matrix for a Cormack-Jolly-Seber model with
+ states alive and dead and the various alive states split by the status
+ of the tags as described above.
+ The probability of survival is 
+\begin_inset Formula $\phi$
+\end_inset
+
+.
+ All probabilities are shown as constants but can vary.
  
 \end_layout
 
@@ -1600,121 +2925,2636 @@ name "tab3"
 
 \end_layout
 
-\begin_layout Standard
-We define 
-\begin_inset Formula $p_{s_{3-i}}^{i}$
+\begin_layout Plain Layout
+\begin_inset Tabular
+<lyxtabular version="3" rows="7" columns="7">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top" width="0pt">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="left" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="1" alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+to state
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+11
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+10
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+01
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+00
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Dead
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="3" alignment="left" valignment="top" bottomline="true" rotate="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+from state
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+11
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\phi\pi_{11}$
 \end_inset
 
-to be the conditional probability that the 
-\begin_inset Formula $i^{th}$
-\end_inset
 
- tag is lost given the other tag status is 
-\begin_inset Formula $s_{3-i}$
-\end_inset
-
-: 
-\begin_inset Formula 
-\[
-p_{i}^{s_{3-i}}=Pr\left(S_{i}=0\vert S_{3-i}=s_{3-i}\right)=\frac{e^{\beta_{i}+\alpha{\bullet(1-s}_{3-i})}}{1+e^{\beta_{i}+\alpha{\bullet(1-s}_{3-i})}}\thinspace\thinspace.
-\]
+\end_layout
 
 \end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
 
- Thus, 
-\begin_inset Formula $p_{i}^{0}=Pr\left(S_{i}=0\vert S_{3-i}=0\right)=\frac{e^{\beta_{i}+\alpha}}{1+e^{\beta_{i}+\alpha}}$
+\begin_layout Plain Layout
+\begin_inset Formula $\phi\pi_{10}$
 \end_inset
 
- whereas, 
-\begin_inset Formula $p_{i}^{1}=Pr\left(S_{i}=0\vert S_{3-i}=1\right)=\frac{e^{\beta_{i}}}{1+e^{\beta_{i}}}$
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\phi\pi_{01}$
 \end_inset
 
-.
- The conditional probability of tag retention is 
-\begin_inset Formula $q_{i}^{0}=1-p_{i}^{0}$
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\phi\pi_{00}$
 \end_inset
 
- and
-\begin_inset Formula $\thinspace q_{i}^{1}=1-p_{i}^{1}$
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $(1-\phi)$
 \end_inset
 
- Each joint probability can be specified by the product of a marginal and
- a conditional probability: 
-\begin_inset Formula $\pi_{11}=q_{1}^{1}q_{2}=q_{2}^{1}q_{1},\thinspace\thinspace\pi_{10}=q_{1}(1-q_{2}^{1})$
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+10
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\phi(1-\tau_{1}^{0})$
 \end_inset
 
- and 
-\begin_inset Formula $\thinspace\pi_{01}=q_{2}(1-q_{1}^{1}).$
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\phi\tau_{1}^{0}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $(1-\phi)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+01
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\phi(1-\tau_{2}^{0})$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\phi\tau_{2}^{0}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $(1-\phi)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+00
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\phi$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $(1-\phi)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Dead
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
 \end_inset
 
 
 \end_layout
 
 \begin_layout Standard
-Diefenbach et al (1998) and Rivalan et al.
- (2005) specified the joint probabilities in Table 3 in a slightly different
- manner with 
-\begin_inset Formula $\pi_{01}=\pi_{10}=p(1-p^{\ast})$
+\begin_inset Float table
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:CJS Observation matrix"
+
 \end_inset
 
-, 
-\begin_inset Formula $\pi_{00}=pp^{\ast}$
+Hidden Markov model observation probability matrix for a Cormack-Jolly-Seber
+ model with states alive and dead and the various alive states split by
+ the status of the tags as described above.
+ A + means the tag was present when seen, and a - when the tag was missing
+ on an that was seen and 00 means the animal was not seen.
+ Probabilities are shown using an example in which capture (detection) probabili
+ty depends on the number of tags present but they can vary based on any
+ number of factors.
+ 
+\end_layout
+
 \end_inset
 
- and 
-\begin_inset Formula $\pi_{11}=1-2p+pp^{\ast}$
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Tabular
+<lyxtabular version="3" rows="12" columns="6">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="1" alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+State
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+Observation
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+11
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+10
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+01
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+00
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+Dead
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+++
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $(1-I_{M})p_{T}\lambda_{R}+I_{M}p_{TM}\lambda_{L}\lambda_{R}$
 \end_inset
 
-, where p is the marginal tag loss probability and 
-\begin_inset Formula $p*$
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
++u
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $(1-I_{M})p_{T}(1-\lambda_{R})+I_{M}p_{M}\lambda_{L}(1-\lambda_{R})$
 \end_inset
 
- is the conditional probability of losing a tag given the other tag was
- absent.
- Although not stated, their conditional probability of losing a tag given
- the presence of the other tag would be 
-\begin_inset Formula ${p(1-p^{\ast})}\mathord{\left/{\vphantom{{p(1-p^{\ast})}{(1-p)}}}\right.\kern -\nulldelimiterspace}{(1-p)}$
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $(1-I_{M})p_{T}(1-\lambda_{R})+I_{M}p_{TM}\lambda_{L}(1-\lambda_{R})$
 \end_inset
 
-.
- In both papers the authors used separate functional forms for 
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+u+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $(1-I_{M})p_{T}(1-\lambda_{L})+I_{M}p_{M}\lambda_{R}(1-\lambda_{L})$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $(1-I_{M})p_{T}(1-\lambda_{L})+I_{M}p_{TM}\lambda_{R}(1-\lambda_{L})$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+uu
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $I_{M}p_{M}(1-\lambda_{R})(1-\lambda_{L})$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $I_{M}p_{TM}(1-\lambda_{R})(1-\lambda_{L})$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $I_{M}p_{TM}(1-\lambda_{R})(1-\lambda_{L})$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $I_{M}p_{M}(1-\lambda_{R})(1-\lambda_{L})$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
++-
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $I_{M}p_{TM}\lambda_{L}\lambda_{R}+(1-I_{M})p_{T}\lambda_{L}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+-+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $I_{M}p_{TM}\lambda_{L}\lambda_{R}+(1-I_{M})p_{T}\lambda_{L}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+--
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $I_{M}p_{M}\lambda_{L}\lambda_{R}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+-u
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $I_{M}p_{TM}\lambda_{L}(1-\lambda_{R})$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $I_{M}p_{M}\lambda_{L}(1-\lambda_{R})$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+u-
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $I_{M}p_{TM}\lambda_{R}(1-\lambda_{L})$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $I_{M}p_{M}\lambda_{R}(1-\lambda_{L})$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+00
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $1-p_{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $I_{M}(1-p_{TM})+(1-I_{M})(1-p_{T})$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $I_{M}(1-p_{TM})+(1-I_{M})(1-p_{T})$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $I_{M}(1-p_{M})$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+1
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:CJS Observation matrix-tagonly"
+
+\end_inset
+
+Hidden Markov model observation matrix for a Cormack-Jolly-Seber model with
+ states alive and dead and the various alive states split by the status
+ of the tags as described above.
+ A + means the tag was present when seen, and a - when the tag was missing
+ on an animal that was seen and 00 means the animal was not seen.
+ Probabilities are shown using an example in which capture (detection) probabili
+ty depends on the number of tags present but they can vary based on any
+ number of factors.
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Tabular
+<lyxtabular version="3" rows="8" columns="6">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="1" alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+State
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+Observation
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+11
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+10
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+01
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+00
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+Dead
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+++
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $\delta p_{L}p_{R}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
++u
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $p_{L}(1-\delta p_{R})$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $p_{L}(1-\delta p_{R})$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+u+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $p_{R}(1-\delta p_{L})$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $p_{R}(1-\delta p_{L})$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
++-
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $\delta p_{L}p_{R}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+-+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $\delta p_{L}p_{R}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+00
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $1-(p_{L}+p_{R}-\delta p_{L}p_{R}$
+\end_inset
+
+)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $1-p_{L}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $1-p_{R}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+1
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:CJS Observation matrix-1"
+
+\end_inset
+
+Hidden Markov model observation matrix for a Cormack-Jolly-Seber model in
+ which capture is independent of the tags and tag status is known with certainty.
+ Alive states are 11,10,01, and 00 which represent the status of the tags.
+ For observations, + means the tag was present when seen, and - when the
+ tag was missing on an animal that was seen and 00 means the animal was
+ not seen.
+ The indicator variable 
+\size small
+
+\begin_inset Formula $I_{M}$
+\end_inset
+
+
+\size default
+ is 1 for permanently marked animals and 0 otherwise.
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Tabular
+<lyxtabular version="3" rows="7" columns="6">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="1" alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+State
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+Observation
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+11
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+10
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+01
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+00
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+Dead
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+++
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
 \begin_inset Formula $p$
 \end_inset
 
- and 
-\begin_inset Formula $p*$
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
++-
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $p$
 \end_inset
 
- and specified the independence model by using the same model for both (
-\begin_inset Formula $p=p*)$
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+-+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $p$
 \end_inset
 
-.
- Their approach is viable but we believe it is preferable to have a model
- with a parameter that controls dependence and with independence specified
- simply as 
-\begin_inset Formula $\alpha=$
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+--
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $I_{M}p$
 \end_inset
 
-0.
- As we show later this enables flexibility in modeling and incorporating
- dependence.
- Our model was motivated by Bradshaw et al.
- (2000) which used logistic regression and specified dependence in tag loss
- via interactions and measured effects in terms of odds multipliers.
- We note that they also provide a closed form estimator for the model in
- Table 3 with no covariates and 
-\begin_inset Formula $\alpha=$
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+00
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $1-p$
 \end_inset
 
-0.
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $1-p$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $1-p$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $1-I_{M}p$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+1
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newpage clearpage
+\end_inset
+
+
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+
+\series bold
+Appendix
 \end_layout
 
 \begin_layout Standard
-As mentioned previously the probability structure for tag loss is quite
- similar to capture-recapture (mark-recapture) for two occasions with a
- closed population which has been used with two observers to measure detection
- probability in visual surveys.
+The probability structure for tag loss is equivalent to capture-recapture
+ (mark-recapture) for two occasions with a closed population which has been
+ used with two observers to measure detection probability in visual surveys.
  When detection probability is measured solely with the mark-recapture data,
  it is necessary to assume independence between the detections by the two
  observers because those missed by both observers (
@@ -1722,10 +5562,9 @@ As mentioned previously the probability structure for tag loss is quite
 \end_inset
 
  are obviously not included in the sample (Borchers, 1999).
- Recently, the independence assumption was weakened (Borchers et al., 2006;
- Laake, 1999; Laake, Dawson and Hone, 2008)(Laake and Borchers 2004) in
- the combined mark-recapture and distance sampling by including a dependence
- measure 
+ Recently, the independence assumption was weakened (Laake, 1999; Laake
+ and Borchers 2004; Borchers et al., 2006) in the combined mark-recapture
+ and distance sampling by including a dependence measure 
 \begin_inset Formula $\delta(x)$
 \end_inset
 
@@ -1773,7 +5612,14 @@ The dependence structure we have defined for tag loss can be expressed in
 
  dependence of Borchers et al.
  (2006).
- Under the independence model (Table 2 excluding 
+ Under the independence model (Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:indep_table-logit"
+
+\end_inset
+
+ excluding 
 \begin_inset Formula $n_{00})$
 \end_inset
 
@@ -1785,7 +5631,14 @@ The dependence structure we have defined for tag loss can be expressed in
 
 \end_inset
 
- Likewise for the dependence model (Table 3): 
+ Likewise for the dependence model (Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:dep_table-logit"
+
+\end_inset
+
+): 
 \begin_inset Formula 
 \[
 1-\pi_{00}=\frac{1+e^{\beta_{1}}+e^{\beta_{2}}}{1+e^{\beta_{1}}+e^{\beta_{2}}+e^{\beta_{1}+\beta_{2}+\alpha}}
@@ -1805,7 +5658,7 @@ The dependence structure we have defined for tag loss can be expressed in
 \end_inset
 
  The same relationship is obtained from 
-\begin_inset Formula $\delta=q_{i}^{1}\mathord{\left/{\vphantom{q_{i}^{1}q_{i}}}\right.\kern -\nulldelimiterspace}q_{i}=\frac{K}{K^{\ast}}\thinspace$
+\begin_inset Formula $\delta=q_{i}^{1}/q_{i}=\frac{K}{K^{\ast}}\thinspace$
 \end_inset
 
 and from the ratio of any of the joint probabilities other than for the
@@ -1909,11 +5762,11 @@ The joint probabilities can be rewritten in terms of
 \end_inset
 
  or as 
-\begin_inset Formula $\pi_{11}=q_{1}^{1}q_{2}^{1}/\delta,\thinspace\thinspace\pi_{10}=q_{1}^{1}p_{2}^{1}/\delta$
+\begin_inset Formula $\pi_{11}=q_{1}^{1}q_{2}^{1}/\delta,\thinspace\thinspace\pi_{10}=q_{1}^{1}\tau_{2}^{1}/\delta$
 \end_inset
 
  and 
-\begin_inset Formula $\pi_{01}=q_{2}^{1}p_{1}^{1}/\delta$
+\begin_inset Formula $\pi_{01}=q_{2}^{1}\tau_{1}^{1}/\delta$
 \end_inset
 
 .
@@ -1931,8 +5784,14 @@ The joint probabilities can be rewritten in terms of
 \end_inset
 
 .
- This is also obvious by examining Table 3 and noting that the joint probabiliti
-es for the observed set of data (
+ This is also obvious by examining Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:dep_table-logit"
+
+\end_inset
+
+ and noting that the joint probabilities for the observed set of data (
 \begin_inset Formula $n_{11}n_{10}n_{01})$
 \end_inset
 
@@ -1957,66 +5816,15 @@ es for the observed set of data (
 \end_layout
 
 \begin_layout Standard
-The most obvious and best way to incorporate dependence is to mark a subset
- of the animals with a permanent mark so for a subset of the data 
-\begin_inset Formula $n_{00}$
-\end_inset
-
- is observable.
- For example, all captured black bears in Pennsylvania were given 2 ear
- tags but some of the bears were also given a permanent unique lip tattoo
- (Diefenbach et al.
- 1998) which could be used to identify bears that had lost both ear tags.
- The likelihood for the tagged only (
-\begin_inset Formula $n_{11}n_{10}n_{01})$
-\end_inset
-
- would be: 
-\begin_inset Formula 
-\[
-L\left({\beta_{1},\beta_{2}}\thinspace\vert\thinspace{n_{10},n_{01},n_{11}}\right)\propto\prod\limits _{\omega=11,01,10}\left(\frac{\pi_{\omega}}{1-\pi_{00}}\right)^{n_{\omega}}
-\]
-
-\end_inset
-
- and for the tagged and marked: (
-\begin_inset Formula $n_{11}^{m}n_{01}^{m}n_{10}^{m}n_{00}^{m})$
-\end_inset
-
-: 
-\begin_inset Formula 
-\[
-L\left({\beta_{1},\beta_{2},\alpha}\thinspace\vert\thinspace{n_{11}^{m},n_{10}^{m},n_{01}^{m},n_{00}^{m}}\right)\propto\prod\limits _{\omega=11,01,10,00}\pi_{\omega}^{n_{\omega}^{m}}
-\]
-
-\end_inset
-
- The combined likelihood for the data could improve on the precision of
- the tag loss estimates while adjusting for dependence measured from the
- permanently marked bears.
- In the absence of data on permanently marked animals, a Bayesian alternative
- could be used in which a prior distribution for 
-\begin_inset Formula $\alpha$
-\end_inset
-
- or 
-\begin_inset Formula $\delta$
-\end_inset
-
- could be used with the likelihood for the tagged only bears.
- Preferably the prior would be data-derived from a similar species and situation.
-\end_layout
-
-\begin_layout Standard
-Next we consider incorporating dependence for situations in which all of
- the animals are double-tagged and we cannot observe animals that lose both
- tags.
- On the surface this appears to be impossible because there is no ancillary
- data as with mrds.
- However, we can replace the role of ancillary data with models that restrict
- the dependence and still provide estimable parameters.
- For example, consider California sea lions which have a tag applied to
- both fore-flippers as pups.
+Unfortunately, there is no equivalent ancillary data for tag loss models
+ as in mark-recapture distance sampling.
+ One could envision models that could incorporate dependence only from doubly-ta
+gged individuals.
+ For example, consider California sea lions (
+\shape italic
+Zalophus californinanus
+\shape default
+) which have a tag applied to both fore-flippers as pups.
  Initially, tag loss may be due to manufacturing or application defects
  which may be independent between tags; however, as the animal grows, the
  expansion of the fore-flipper may put pressure on the tag causing the tag
@@ -2027,20 +5835,30 @@ Next we consider incorporating dependence for situations in which all of
 \begin_inset Formula $\alpha=$
 \end_inset
 
-0 for the first year but not subsequent years.
- As long as tag loss parameters 
+0 initially for a few years but not subsequent years.
+ If 
 \begin_inset Formula $\beta_{i}$
 \end_inset
 
- are age-invariant then any dependence beyond the first year can be estimated.
- Conceptually, this is similar to having a subset of animals with a permanent
- mark but instead we have a subset of animals for which it is reasonable
- to assume independence holds.
+ are age-invariant or can be expressed as a linear function on age, then
+ the slope and intercept for tag loss could be estimated during the period
+ in which 
+\begin_inset Formula $\alpha=$
+\end_inset
+
+0 and deviations from this pattern would be measured as dependence.
+ However, this approach would be very model-dependent with no good way to
+ evaluate the model reliability.
+ Thus, we recommend using a permanently marked sample.
+ 
 \end_layout
 
-\begin_layout Standard
+\begin_layout Section*
 
 \series bold
+\begin_inset Newpage newpage
+\end_inset
+
 Literature Cited
 \end_layout
 
