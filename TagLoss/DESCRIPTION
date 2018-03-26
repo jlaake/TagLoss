@@ -1,4 +1,4 @@
-Package: tagloss
+Package: tagloss estimation
 Type: Package
 Title: Estimation of tag loss rates with dependence
 Version: 1.0
